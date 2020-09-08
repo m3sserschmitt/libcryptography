@@ -1,26 +1,3 @@
-/*
-MIT License
-
-Copyright (c) 2020 Romulus-Emanuel Ruja (romulus-emanuel.ruja@tutanota.com).
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
 
 /*
  * Base64 encoding / decoding implementation.
@@ -29,9 +6,10 @@ SOFTWARE.
 #include "../include/cryptography.h"
 
 #include <openssl/pem.h>
-#include <string.h>
 #include <vector>
 
+
+/*
 std::string Cryptography::base64_encode(unsigned char *in, size_t length) {
     std::string out;
 
@@ -50,7 +28,39 @@ std::string Cryptography::base64_encode(unsigned char *in, size_t length) {
     
     return out;
 }
+*/
+void Cryptography::base64_encode(unsigned char *in, size_t inlen, char *out) {
+    size_t encoded_len = get_encode_length(inlen) + 1;
+    char *out_buffer = (char *) malloc(encoded_len);
+    char *addr = out_buffer;
 
+    memset(out_buffer, 0, encoded_len);
+
+    int val=0, valb=-6;
+    for (size_t i = 0; i < inlen; i ++) {
+        val = (val<<8) + in[i];
+        valb += 8;
+        while (valb>=0) {
+            *addr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[(val>>valb)&0x3F];
+            addr ++;
+            valb-=6;
+        }
+    }
+
+    if(valb > -6) {
+        *addr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[((val<<8)>>(valb+8))&0x3F];
+        addr ++;
+    }
+
+    while(strlen(out_buffer) % 4) {
+        *addr = '=';
+        addr ++;
+    }
+    
+    strcpy(out, out_buffer);
+    free(out_buffer);
+}
+/*
 unsigned char *Cryptography::base64_decode(std::string in, size_t &outlen) {
     outlen = 0;
     size_t required_memory = get_decode_length((char *) in.data());
@@ -76,10 +86,39 @@ unsigned char *Cryptography::base64_decode(std::string in, size_t &outlen) {
 
     return out;
 }
+*/
+void Cryptography::base64_decode(char *in, unsigned char *out, size_t &outlen) {
+    outlen = 0;
+    size_t required_memory = get_decode_length(strlen(in)) + 1;
+
+    unsigned char *out_buffer = (unsigned char *) malloc(required_memory);
+    memset(out_buffer, 0, required_memory);
+
+    std::vector<int> T(256,-1);
+    for (int i=0; i<64; i++) T["ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[i]] = i; 
+
+    int val=0, valb=-8;
+    unsigned char *addr = out_buffer;
+
+    for (char *c = in; *c; c++) {
+        if (T[*c] == -1) break;
+        val = (val<<6) + T[*c];
+        valb += 6;
+        if (valb>=0) {
+            *addr = (char) (val>>valb)&0xFF;
+            addr ++;
+            valb-=8;
+            outlen ++;
+        }
+    }
+
+    memcpy(out, out_buffer, outlen);
+    free(out_buffer);
+}
 
 size_t Cryptography::get_encode_length(size_t buffer_length)
 {
-	return (buffer_length + 2) * 4 / 3 + 1;
+	return (buffer_length + 2) * 4 / 3;
 }
 
 size_t Cryptography::get_decode_length(size_t encoded_length) {
@@ -94,5 +133,5 @@ size_t Cryptography::get_decode_length(char *b64input)
 		padding = 2;
 	else if (b64input[len - 1] == '=') //last char is =
 		padding = 1;
-	return (len * 3) / 4 - padding + 1;
+	return (len * 3) / 4 - padding;
 }

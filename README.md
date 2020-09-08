@@ -1,4 +1,4 @@
-# Cryptography
+# cryptography
 
 OpenSSL RSA and AES cryptography.
 
@@ -37,6 +37,6 @@ C/C++ projects.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## Disclaimer
 
 Keep in mind that this library it's just a **proof of concept** and **not** intended for production use.

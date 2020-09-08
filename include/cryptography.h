@@ -5,11 +5,12 @@
 
 #include "errors.h"
 #include "hash.h"
-
+#include "memory.h"
 
 #include <openssl/rsa.h>
 #include <openssl/evp.h>
-#include <string>
+#include <openssl/pem.h>
+#include <openssl/aes.h>
 
 
 #ifndef CRYPTOGRAPHY_H
@@ -30,54 +31,56 @@ public:
     /*
      * Calculate required memory for base64 decoding.
      * 
-     * encoded_length: size of encoded data;
+     * inlen: size of encoded data;
     */
-    static size_t get_decode_length(size_t encoded_length);
+    static size_t get_decode_length(size_t inlen);
 
     /*
      * Calculate required memory buffer for base64 decoding.
      * 
-     * base64_input: base64 encoded data;
+     * in: base64 encoded data;
      */
-    static size_t get_decode_length(char* base64_input);
+    static size_t get_decode_length(char* in);
 
     /*
      * Calculate required memory buffer for base64 encoding.
      * 
-     * data_lenght: size of data to be encoded;
+     * inlen: size of data to be encoded;
      */
-    static size_t get_encode_length(size_t data_length);
+    static size_t get_encode_length(size_t inlen);
 
     /*
-     * Decode base64 data. Returns decoded data.
+     * Decode base64 encoded data.
      * 
      * in: base64 data to be decoded;
-     * out: decoded data size;
+     * out: decoded data;
+     * outlen: decoded data length;
      */
-    static unsigned char *base64_decode(std::string in, size_t &outlen);
+    static void base64_decode(char *in, unsigned char *out, size_t &outlen);
     
     /*
-     * Base64 encode. Returns encoded data.
+     * Base64 encode.
      * 
      * in: data to be encoded;
-     * length: size of data to be encoded;
+     * inlen: size of data to be encoded;
+     * out: base64 encoded data;
      */
-    static std::string base64_encode(unsigned char *in, size_t length);
+    static void base64_encode(unsigned char *in, size_t inlen, char *out);
 
     /*
      * Compute SHA256. Returns an array containing message digest.
      * 
-     * data: data to compute SHA256;
-     * lenght: length of input data;
+     * in: data to compute SHA256;
+     * inlen: length of input data;
      */
-    static int *compute_SHA256(unsigned char *data, size_t length);
+    static int *compute_SHA256(unsigned char *in, size_t inlen);
     
     /*
      * Compute SHA256. Returns an array containing message digest.
      * 
-     * data: data to compute SHA256;
+     * in: data to compute SHA256;
      */
-    static int *compute_SHA256(std::string data);
+    static int *compute_SHA256(char *in);
     
     /*
      * Creates a 64 bytes SHA256 hexdigest from a digest.
@@ -89,17 +92,17 @@ public:
     /*
      * Creates SHA256 hexdigest of provided data.
      * 
-     * data: data to compute SHA256; 
-     * length: data length;
+     * in: data to compute SHA256; 
+     * inlen: data length;
      */ 
-    static std::string sha256(unsigned char *data, size_t length);
+    static std::string sha256(unsigned char *in, size_t inlen);
 
     /*
      * Creates SHA256 hexdigest of input data.
      * 
-     * data: data to compute SHA256; 
+     * in: data to compute SHA256; 
      */   
-    static std::string sha256(std::string data);
+    static std::string sha256(std::string in);
 
     /*
      * Creates a EVP_PKEY private key object from PEM data.
@@ -140,30 +143,30 @@ public:
      * data_lenght: data length;
      * authentic: if successful contain result: true if valid signature, otherwise false;
      */
-    static int RSA_verify_signature(EVP_PKEY* public_key, unsigned char* data_hash, size_t data_hash_length, const char* data, size_t data_length, bool &authentic);
+    static int RSA_verify_signature(EVP_PKEY* public_key, unsigned char* data_hash, size_t data_hash_length, unsigned char* data, size_t data_length, bool &authentic);
     
     /*
      * Check authenticity of RSA signature. Returns true if verifying process successful, 
      * otherwise false.
      * 
      * public_key: EVP_PKEY object of public key (created by create_public_RSA method);
-     * plain_text: message to be verified;
-     * base64_signature: base64 encoded signature of provided message;
+     * data: data to be verified;
+     * signature: base64 encoded signature of input data;
      * authentic: if successful contain result: true if valid signature, otherwise false;
      */    
-    static int RSA_verify_signature(EVP_PKEY *public_key, std::string plain_text, char* base64_signature, bool &authentic);
+    static int RSA_verify_signature(EVP_PKEY *public_key, char *data, char *signature, bool &authentic);
     
     /*
      * Creates RSA signature. Returns 1 if signing process successful, 
      * otherwise returns an appropriate negative error code.
      * 
      * private_key: EVP_PKEY object of private key (created by create_private_RSA method);
-     * data: data to sign;
-     * data_length: data length;
+     * in: data to be signed;
+     * inlen: data length;
      * signature: will contain signature, if successful;
      * signature_length: will contain signature length in bytes, if successful;
      */
-    static int RSA_sign(EVP_PKEY* private_key, const unsigned char* data, size_t msg_length, unsigned char *signature, size_t &signature_length);
+    static int RSA_sign(EVP_PKEY* private_key, unsigned char* in, size_t inlen, unsigned char *signature, size_t &signature_length);
     
     /*
      * Creates RSA signature. Returns 1 if signing process successful,
@@ -173,7 +176,7 @@ public:
      * messsage: message to be signed;
      * signature: if successful, contains base64 encoded signature of provided message;
      */    
-    static int RSA_sign(EVP_PKEY *private_key, std::string message, char *signature);
+    static int RSA_sign(EVP_PKEY *private_key, char *in, char *signature);
 
     /*
      * Returns maximum size of encrypted / decrypted data for provided EVP_PKEY key object.
@@ -238,9 +241,9 @@ public:
     /*
      * Returns size of AES encrypted data.
      * 
-     * plaintext_size: size of data to be encrypted;
+     * inlen: size of data to be encrypted;
      */
-    static size_t get_AES_encrypted_size(size_t plaintext_size);
+    static size_t get_AES_encrypted_size(size_t inlen);
 
     /*
      * Returns size of AES decrypted data.
@@ -252,9 +255,9 @@ public:
     /*
      * Get base64 encoded size of AES encrypted data.
      * 
-     * plaintext_size: size of data to be encrypted, then base64 encoded.
+     * inlen: size of data to be encrypted, then base64 encoded.
     */
-    static size_t get_AES_encrypted_encoded_size(size_t plaintext_size);
+    static size_t get_AES_encrypted_encoded_size(size_t inlen);
 
     /*
      * Get plaintext size of base64 encoded AES encrypeted data.
