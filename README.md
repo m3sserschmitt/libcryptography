@@ -12,6 +12,8 @@ You need OpenSSL library to be installed on your machine. Type this command in y
 
 `openssl version`
 
+If you see something similar to this: `OpenSSL 1.1.1g  21 Apr 2020`, it means that you have OpenSSL installed.
+
 ### Installing
 
 You need a copy of source code. Download the repository using git:
