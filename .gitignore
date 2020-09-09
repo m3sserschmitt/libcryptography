@@ -1,3 +1,5 @@
 mfc.config.json
-*.so
+*.so.*
+*.d
 *.o
+.vscode

@@ -1,16 +1,16 @@
 CC=g++
-TARGET=libcryptography.so
+TARGET=libcryptography.so.0.0.1
 CC_DEPS :=
 OBJECTS :=
 RM=rm -v
 
-all: libcryptography.so
+all: libcryptography.so.0.0.1
 
 -include ./src/subdir.mk
 -include $(CC_DEPS)
 
-libcryptography.so: $(OBJECTS)
-	$(CC) $(OBJECTS) -lcrypto -fPIC -Wall -shared -o $(TARGET)
+libcryptography.so.0.0.1: $(OBJECTS)
+	$(CC) $(OBJECTS) -lcrypto -shared -o $(TARGET)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET)
