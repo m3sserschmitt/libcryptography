@@ -1,0 +1,10 @@
+{
+	"target": "libcryptography.so.0.0.3",
+	"c_flags": ["-Wall","-fPIC"],
+	"ld_flags": ["-shared","-lcrypto"],
+	"extensions": ["cc"],
+	"ignore_paths": [
+		".vscode"
+	],
+	"clean": true
+}
