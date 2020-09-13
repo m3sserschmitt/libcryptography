@@ -1,8 +1,9 @@
 
 #include "../include/cryptography.h"
+#include "../include/hash.h"
 
-#include <string>
 #include <sstream>
+#include <string.h>
 
 Hash::Hash() {
     this->update(this->digest);
@@ -35,15 +36,15 @@ void Hash::update(int *d) {
         this->digest[i] = d[i];
     }
 
-    strcpy(this->hexdigest, Cryptography::sha256(d).data());
+    strcpy(this->hexdigest, sha256(d).data());
 }
 
 void Hash::update(std::string s) {
-    this->update(Cryptography::compute_SHA256((char *) s.data()));
+    this->update(compute_SHA256((char *) s.data()));
 }
 
 void Hash::update(unsigned char *data, size_t length) {
-    this->update(Cryptography::compute_SHA256(data, length));
+    this->update(compute_SHA256(data, length));
 }
 
 void Hash::update_from_hexdigest(std::string hexdigest) {   

@@ -3,12 +3,31 @@
  * Base64 encoding / decoding implementation.
 */
 
-#include "../include/cryptography.h"
+#include "../../include/v1/base64.h"
 
-#include <openssl/pem.h>
+#include <stdlib.h>
 #include <vector>
+#include <string.h>
 
+size_t get_encoded_length(size_t buffer_length)
+{
+	return (buffer_length + 2) * 4 / 3;
+}
 
+size_t get_decoded_length(size_t encoded_length) {
+    return (encoded_length * 3) / 4;
+}
+
+size_t get_decoded_length(char *b64input)
+{
+	size_t len = strlen(b64input), padding = 0;
+
+	if (b64input[len - 1] == '=' && b64input[len - 2] == '=') //last two chars are =
+		padding = 2;
+	else if (b64input[len - 1] == '=') //last char is =
+		padding = 1;
+	return (len * 3) / 4 - padding;
+}
 /*
 std::string Cryptography::base64_encode(unsigned char *in, size_t length) {
     std::string out;
@@ -29,8 +48,8 @@ std::string Cryptography::base64_encode(unsigned char *in, size_t length) {
     return out;
 }
 */
-void Cryptography::base64_encode(unsigned char *in, size_t inlen, char *out) {
-    size_t encoded_len = get_encode_length(inlen) + 1;
+void base64_encode(unsigned char *in, size_t inlen, char *out) {
+    size_t encoded_len = get_encoded_length(inlen) + 1;
     char *out_buffer = (char *) malloc(encoded_len);
     char *addr = out_buffer;
 
@@ -87,9 +106,9 @@ unsigned char *Cryptography::base64_decode(std::string in, size_t &outlen) {
     return out;
 }
 */
-void Cryptography::base64_decode(char *in, unsigned char *out, size_t &outlen) {
+void base64_decode(char *in, unsigned char *out, size_t &outlen) {
     outlen = 0;
-    size_t required_memory = get_decode_length(strlen(in)) + 1;
+    size_t required_memory = get_decoded_length(strlen(in)) + 1;
 
     unsigned char *out_buffer = (unsigned char *) malloc(required_memory);
     memset(out_buffer, 0, required_memory);
@@ -114,24 +133,4 @@ void Cryptography::base64_decode(char *in, unsigned char *out, size_t &outlen) {
 
     memcpy(out, out_buffer, outlen);
     free(out_buffer);
-}
-
-size_t Cryptography::get_encode_length(size_t buffer_length)
-{
-	return (buffer_length + 2) * 4 / 3;
-}
-
-size_t Cryptography::get_decode_length(size_t encoded_length) {
-    return (encoded_length * 3) / 4;
-}
-
-size_t Cryptography::get_decode_length(char *b64input)
-{
-	size_t len = strlen(b64input), padding = 0;
-
-	if (b64input[len - 1] == '=' && b64input[len - 2] == '=') //last two chars are =
-		padding = 2;
-	else if (b64input[len - 1] == '=') //last char is =
-		padding = 1;
-	return (len * 3) / 4 - padding;
 }
