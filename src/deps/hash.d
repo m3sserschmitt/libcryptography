@@ -1,0 +1,19 @@
+./src/hash.o: ./src/hash.cc\
+./include/cryptography.h\
+./include/hash.h\
+./include/v1/aes.h\
+./include/v1/base64.h\
+./include/v1/cleanup.h\
+./include/v1/cryptography.h\
+./include/v1/errors.h\
+./include/v1/rsa.h\
+./include/v1/sha.h\
+./include/v1/typedefs.h\
+./include/v2/aes.h\
+./include/v2/base64.h\
+./include/v2/cryptography.h\
+./include/v2/rsa.h\
+./include/v2/sha.h\
+./include/v3/aes.h\
+./include/v3/cryptography.h\
+./include/v3/rsa.h
