@@ -4,12 +4,12 @@
      * Performs AES encryption. Return 1 if successful, otherwise returns an appropriate
      * negative error code.
      * 
-     * encrypt_ctx: initialized encryption context;
+     * encr: initialized encryption context;
      * in: data to be encrypted;
      * inlen: length of data to be encrypted;
      * out: if successful, contains base64 encoded encrypted data;
      */
-int AES_encrypt(EVP_CIPHER_CTX *encrypt_ctx, unsigned char *in, size_t inlen, char **out);
+int AES_encrypt(ENCRYPT_CTX encr, BYTES in, SIZE inlen, BASE64 *out);
 
 /* 
      * Perfoms AES decryption. Returns 1 if successful, otherwise returns an appropriate
@@ -20,4 +20,4 @@ int AES_encrypt(EVP_CIPHER_CTX *encrypt_ctx, unsigned char *in, size_t inlen, ch
      * out: if successful, contains decrypted data;
      * outlen: decrypted data length;
      */
-int AES_decrypt(EVP_CIPHER_CTX *decrypt_ctx, char *in, unsigned char **out, size_t &outlen);
+int AES_decrypt(DECRYPT_CTX decr, BASE64 in, BYTES *out, SIZE &outlen);

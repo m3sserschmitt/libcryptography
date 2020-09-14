@@ -9,46 +9,27 @@
 #include <vector>
 #include <string.h>
 
-size_t get_encoded_length(size_t buffer_length)
+size_t get_encoded_length(SIZE inlen)
 {
-	return (buffer_length + 2) * 4 / 3;
+	return (inlen + 2) * 4 / 3;
 }
 
-size_t get_decoded_length(size_t encoded_length) {
-    return (encoded_length * 3) / 4;
+size_t get_decoded_length(SIZE inlen) {
+    return (inlen * 3) / 4;
 }
 
-size_t get_decoded_length(char *b64input)
+size_t get_decoded_length(BASE64 in)
 {
-	size_t len = strlen(b64input), padding = 0;
+	size_t len = strlen(in), padding = 0;
 
-	if (b64input[len - 1] == '=' && b64input[len - 2] == '=') //last two chars are =
+	if (in[len - 1] == '=' && in[len - 2] == '=') //last two chars are =
 		padding = 2;
-	else if (b64input[len - 1] == '=') //last char is =
+	else if (in[len - 1] == '=') //last char is =
 		padding = 1;
 	return (len * 3) / 4 - padding;
 }
-/*
-std::string Cryptography::base64_encode(unsigned char *in, size_t length) {
-    std::string out;
 
-    int val=0, valb=-6;
-    for (size_t i = 0; i < length; i ++) {
-        val = (val<<8) + in[i];
-        valb += 8;
-        while (valb>=0) {
-            out.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[(val>>valb)&0x3F]);
-            valb-=6;
-        }
-    }
-
-    if (valb>-6) out.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[((val<<8)>>(valb+8))&0x3F]);
-    while (out.size()%4) out.push_back('=');
-    
-    return out;
-}
-*/
-void base64_encode(unsigned char *in, size_t inlen, char *out) {
+void base64_encode(BYTES in, SIZE inlen, BASE64 out) {
     size_t encoded_len = get_encoded_length(inlen) + 1;
     char *out_buffer = (char *) malloc(encoded_len);
     char *addr = out_buffer;
@@ -79,34 +60,8 @@ void base64_encode(unsigned char *in, size_t inlen, char *out) {
     strcpy(out, out_buffer);
     free(out_buffer);
 }
-/*
-unsigned char *Cryptography::base64_decode(std::string in, size_t &outlen) {
-    outlen = 0;
-    size_t required_memory = get_decode_length((char *) in.data());
-    unsigned char *out = (unsigned char *) malloc(required_memory);
-    memset(out, 0, required_memory);
 
-    std::vector<int> T(256,-1);
-    for (int i=0; i<64; i++) T["ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[i]] = i; 
-
-    int val=0, valb=-8;
-    unsigned char *addr = out;
-    for (char c : in) {
-        if (T[c] == -1) break;
-        val = (val<<6) + T[c];
-        valb += 6;
-        if (valb>=0) {
-            *addr = (char) (val>>valb)&0xFF;
-            addr ++;
-            valb-=8;
-            outlen ++;
-        }
-    }
-
-    return out;
-}
-*/
-void base64_decode(char *in, unsigned char *out, size_t &outlen) {
+void base64_decode(BASE64 in, BYTES out, SIZE &outlen) {
     outlen = 0;
     size_t required_memory = get_decoded_length(strlen(in)) + 1;
 

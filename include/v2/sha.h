@@ -6,7 +6,7 @@
      * in: data to compute SHA256; 
      * inlen: data length;
      */
-std::string sha256(unsigned char *in, size_t inlen);
+std::string sha256(BYTES in, SIZE inlen);
 
 /*
      * Creates SHA256 hexdigest of input data.

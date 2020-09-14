@@ -1,4 +1,4 @@
-#include <cstddef>
+#include "typedefs.h"
 
 /*
      * Calculate required memory for base64 decoding.
@@ -6,7 +6,7 @@
      * inlen: size of encoded data;
     */
 
-size_t get_decoded_length(size_t inlen);
+size_t get_decoded_length(SIZE inlen);
 
 /*
      * Calculate required memory buffer for base64 decoding.
@@ -14,7 +14,7 @@ size_t get_decoded_length(size_t inlen);
      * in: base64 encoded data;
      */
 
-size_t get_decoded_length(char *in);
+size_t get_decoded_length(BASE64 in);
 
 /*
      * Calculate required memory buffer for base64 encoding.
@@ -22,7 +22,7 @@ size_t get_decoded_length(char *in);
      * inlen: size of data to be encoded;
      */
 
-size_t get_encoded_length(size_t inlen);
+size_t get_encoded_length(SIZE inlen);
 
 /*
      * Decode base64 encoded data.
@@ -31,7 +31,7 @@ size_t get_encoded_length(size_t inlen);
      * out: decoded data;
      * outlen: decoded data length;
      */
-void base64_decode(char *in, unsigned char *out, size_t &outlen);
+void base64_decode(BASE64 in, BYTES out, SIZE &outlen);
 
 /*
      * Base64 encode.
@@ -40,4 +40,4 @@ void base64_decode(char *in, unsigned char *out, size_t &outlen);
      * inlen: size of data to be encoded;
      * out: base64 encoded data;
      */
-void base64_encode(unsigned char *in, size_t inlen, char *out);
+void base64_encode(BYTES in, SIZE inlen, BASE64 out);

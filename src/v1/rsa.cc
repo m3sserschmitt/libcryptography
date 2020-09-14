@@ -2,12 +2,12 @@
 #include "../../include/v1/base64.h"
 #include "../../include/v1/errors.h"
 
-int get_RSA_size(EVP_PKEY *key)
+int get_RSA_size(KEY key)
 {
 	return EVP_PKEY_size(key);
 }
 
-EVP_PKEY *create_private_RSA(std::string key)
+PRIVATE_KEY create_private_RSA(std::string key)
 {
 	RSA *rsa = NULL;
 	EVP_PKEY *pkey = EVP_PKEY_new();
@@ -26,12 +26,12 @@ EVP_PKEY *create_private_RSA(std::string key)
 	return pkey;
 }
 
-EVP_PKEY *create_public_RSA(std::string key)
+PUBLIC_KEY create_public_RSA(std::string key_pem)
 {
 	RSA *rsa = NULL;
 	EVP_PKEY *pkey = EVP_PKEY_new();
 	BIO *keybio;
-	const char *c_string = key.c_str();
+	const char *c_string = key_pem.c_str();
 
 	keybio = BIO_new_mem_buf((void *)c_string, -1);
 
@@ -46,7 +46,7 @@ EVP_PKEY *create_public_RSA(std::string key)
 	return pkey;
 }
 
-std::string get_public_PEM(EVP_PKEY *key)
+std::string get_public_PEM(PUBLIC_KEY key)
 {
 	BIO *keybio = BIO_new(BIO_s_mem());
 	PEM_write_bio_PUBKEY(keybio, key);
@@ -57,7 +57,7 @@ std::string get_public_PEM(EVP_PKEY *key)
 	return (*bufferPtr).data;
 }
 
-std::string get_private_PEM(EVP_PKEY *key)
+std::string get_private_PEM(PRIVATE_KEY key)
 {
 	BIO *keybio = BIO_new(BIO_s_mem());
 	PEM_write_bio_RSAPrivateKey(keybio, EVP_PKEY_get1_RSA(key), nullptr, nullptr, 0, nullptr, nullptr);
@@ -68,56 +68,56 @@ std::string get_private_PEM(EVP_PKEY *key)
 	return (*bufferPtr).data;
 }
 
-int RSA_sign(EVP_PKEY *privKey, unsigned char *Msg, size_t MsgLen, unsigned char *EncMsg, size_t &MsgLenEnc)
+int RSA_sign(PRIVATE_KEY key, BYTES in, SIZE inlen, BYTES signature, SIZE &signlen)
 {
 	EVP_MD_CTX *m_RSASignCtx = EVP_MD_CTX_create();
 
-	if (EVP_DigestSignInit(m_RSASignCtx, NULL, EVP_sha256(), NULL, privKey) <= 0)
+	if (EVP_DigestSignInit(m_RSASignCtx, NULL, EVP_sha256(), NULL, key) <= 0)
 	{
 		return EVP_DigestSignInit_ERROR;
 	}
 
-	if (EVP_DigestSignUpdate(m_RSASignCtx, Msg, MsgLen) <= 0)
+	if (EVP_DigestSignUpdate(m_RSASignCtx, in, inlen) <= 0)
 	{
 		return EVP_DigestSignUpdate_ERROR;
 	}
 
-	if (EVP_DigestSignFinal(m_RSASignCtx, NULL, &MsgLenEnc) <= 0)
+	if (EVP_DigestSignFinal(m_RSASignCtx, NULL, &signlen) <= 0)
 	{
 		return EVP_DigestSignFinal_ERROR;
 	}
 
-	if (EVP_DigestSignFinal(m_RSASignCtx, EncMsg, &MsgLenEnc) <= 0)
+	if (EVP_DigestSignFinal(m_RSASignCtx, signature, &signlen) <= 0)
 	{
 		return EVP_DigestSignFinal_ERROR;
 	}
 
-	EVP_MD_CTX_free(m_RSASignCtx);
+	// EVP_MD_CTX_free(m_RSASignCtx);
 
 	return 1;
 }
 
-int RSA_verify_signature(EVP_PKEY *pubKey, unsigned char *MsgHash, size_t MsgHashLen, unsigned char *Msg, size_t MsgLen, bool &Authentic)
+int RSA_verify_signature(PUBLIC_KEY key, BYTES hash, SIZE hashlen, BYTES data, SIZE datalen, bool &authentic)
 {
-	Authentic = false;
+	authentic = false;
 
 	EVP_MD_CTX *m_RSAVerifyCtx = EVP_MD_CTX_create();
-	if (EVP_DigestVerifyInit(m_RSAVerifyCtx, NULL, EVP_sha256(), NULL, pubKey) <= 0)
+	if (EVP_DigestVerifyInit(m_RSAVerifyCtx, NULL, EVP_sha256(), NULL, key) <= 0)
 	{
 		return EVP_DigestVerifyInit_ERROR;
 	}
-	// printf("checkpoint1\n");
-	if (EVP_DigestVerifyUpdate(m_RSAVerifyCtx, Msg, MsgLen) <= 0)
+	
+	if (EVP_DigestVerifyUpdate(m_RSAVerifyCtx, data, datalen) <= 0)
 	{
 		return EVP_DigestVerifyUpdate_ERROR;
 	}
-	// printf("checkpoint2\n");
-	int AuthStatus = EVP_DigestVerifyFinal(m_RSAVerifyCtx, MsgHash, MsgHashLen);
-	// printf("checkpoint3\n");
+	
+	int AuthStatus = EVP_DigestVerifyFinal(m_RSAVerifyCtx, hash, hashlen);
+	
 	if (AuthStatus == 1)
 	{
-		// printf("checkpoint4\n");
-		Authentic = true;
+		// printf("authentic\n");
+		authentic = true;
 		// EVP_MD_CTX_free(m_RSAVerifyCtx);
 		// printf("checkpoint4.5\n");
 		return 1;
@@ -125,22 +125,22 @@ int RSA_verify_signature(EVP_PKEY *pubKey, unsigned char *MsgHash, size_t MsgHas
 	else if (AuthStatus == 0)
 	{
 		// printf("checkpoint5\n");
-		Authentic = false;
+		authentic = false;
 		// EVP_MD_CTX_free(m_RSAVerifyCtx);
 		return 1;
 	}
 	else
 	{
 		// printf("checkpoint6\n");
-		Authentic = false;
+		authentic = false;
 		// EVP_MD_CTX_free(m_RSAVerifyCtx);
 		return EVP_DigestVerifyFinal_ERROR;
 	}
 }
 
-int RSA_encrypt(unsigned char *in, size_t inlen, unsigned char *out, size_t &outlen, EVP_PKEY *pub_key)
+int RSA_encrypt(BYTES in, SIZE inlen, BYTES out, SIZE &outlen, PUBLIC_KEY key)
 {
-	EVP_PKEY_CTX *encrypt_context = EVP_PKEY_CTX_new(pub_key, NULL);
+	EVP_PKEY_CTX *encrypt_context = EVP_PKEY_CTX_new(key, NULL);
 
 	if (not encrypt_context)
 	{
@@ -162,14 +162,14 @@ int RSA_encrypt(unsigned char *in, size_t inlen, unsigned char *out, size_t &out
 		return EVP_PKEY_encrypt_ERROR;
 	}
 
-	EVP_PKEY_CTX_free(encrypt_context);
+	// EVP_PKEY_CTX_free(encrypt_context);
 
 	return 1;
 }
 
-int RSA_decrypt(unsigned char *in, size_t inlen, unsigned char *out, size_t &outlen, EVP_PKEY *priv_key)
+int RSA_decrypt(BYTES in, SIZE inlen, BYTES out, SIZE &outlen, PRIVATE_KEY key)
 {
-	EVP_PKEY_CTX *decrypt_context = EVP_PKEY_CTX_new(priv_key, NULL);
+	EVP_PKEY_CTX *decrypt_context = EVP_PKEY_CTX_new(key, NULL);
 
 	if (not decrypt_context)
 	{
@@ -190,8 +190,8 @@ int RSA_decrypt(unsigned char *in, size_t inlen, unsigned char *out, size_t &out
 	{
 		return EVP_PKEY_decrypt_ERROR;
 	}
-
-	EVP_PKEY_CTX_free(decrypt_context);
-
+	// printf("checkpoint1\n");
+	// EVP_PKEY_CTX_free(decrypt_context);
+	// printf("checkpoint2\n");
 	return 1;
 }

@@ -8,3 +8,6 @@
 void init();
 
 void cleanup();
+
+#define cryptography_init() init()
+#define cryptography_cleanup() cleanup()

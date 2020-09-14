@@ -1,9 +1,9 @@
-#include "../../include/v3/base64.h"
+#include "../../include/v2/base64.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-void base64_encode(unsigned char *in, size_t inlen, char **out)
+void base64_encode(BYTES in, SIZE inlen, BASE64 *out)
 {
     size_t required_memory = get_encoded_length(inlen) + 1;
     *out = (char *) malloc(required_memory);
@@ -12,7 +12,7 @@ void base64_encode(unsigned char *in, size_t inlen, char **out)
     base64_encode(in, inlen, *out);
 }
 
-void base64_decode(char *in, unsigned char **out, size_t outlen)
+void base64_decode(BASE64 in, BYTES *out, SIZE &outlen)
 {
     size_t required_memory = get_decoded_length(in) + 1;
     *out = (unsigned char *) malloc(required_memory);
