@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
-	"target": "libcryptography.so.0.0.1",
-=======
 	"target": "libcryptography.so.0.0.3",
->>>>>>> new_structure
 	"c_flags": ["-Wall","-fPIC"],
 	"ld_flags": ["-shared","-lcrypto"],
 	"extensions": ["cc"],
