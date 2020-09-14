@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 OBJECTS += ./src/aes.o\
 ./src/sha256.o\
 ./src/rsa_pem.o\
@@ -17,6 +18,11 @@ CC_DEPS += ./src/deps/aes.d\
 ./src/deps/base64.d\
 ./src/deps/aes_init.d\
 ./src/deps/rsa_sign.d
+=======
+OBJECTS += ./src/hash.o
+
+CC_DEPS += ./src/deps/hash.d
+>>>>>>> new_structure
 
 ./src/%.o: ./src/%.cc
 	$(CC) -Wall -c -fPIC $< -o $@
