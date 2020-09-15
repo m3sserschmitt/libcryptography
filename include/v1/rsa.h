@@ -26,6 +26,13 @@ PRIVATE_KEY create_private_RSA(std::string key_pem);
 PUBLIC_KEY create_public_RSA(std::string key_pem);
 
 /*
+     * Free public / private key.
+     * 
+     * key: key to be freed;
+     */
+void RSA_free_key(KEY key);
+
+/*
      * Returns public key in PEM format from EVP_PKEY public key object.
      * 
      * key: EVP_PKEY public key object;
@@ -87,3 +94,14 @@ int RSA_encrypt(BYTES in, SIZE inlen, BYTES out, SIZE &outlen, PUBLIC_KEY key);
      * key: EVP_PKEY object of private key (create_private_RSA);
      */
 int RSA_decrypt(BYTES in, SIZE inlen, BYTES out, SIZE &outlen, PRIVATE_KEY key);
+
+#ifndef RSA_H_1
+#define RSA_H_1
+
+#define RSA_get_size(key) get_RSA_size(key)
+#define RSA_create_private_key(key_pem) create_private_RSA(key_pem)
+#define RSA_create_public_key(key_pem) create_public_RSA(key_pem)
+#define RSA_get_public_PEM(key) get_public_PEM(key)
+#define RSA_get_private_PEM(key) get_private_PEM(key)
+
+#endif

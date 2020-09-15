@@ -1,1 +1,2 @@
-#include "v3/cryptography.h"
+#include "v4/cryptography.h"
+#include "hash.h"

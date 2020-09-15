@@ -46,6 +46,10 @@ PUBLIC_KEY create_public_RSA(std::string key_pem)
 	return pkey;
 }
 
+void RSA_free_key(KEY key) {
+	EVP_PKEY_free(key);
+}
+
 std::string get_public_PEM(PUBLIC_KEY key)
 {
 	BIO *keybio = BIO_new(BIO_s_mem());
@@ -92,7 +96,7 @@ int RSA_sign(PRIVATE_KEY key, BYTES in, SIZE inlen, BYTES signature, SIZE &signl
 		return EVP_DigestSignFinal_ERROR;
 	}
 
-	// EVP_MD_CTX_free(m_RSASignCtx);
+	EVP_MD_CTX_free(m_RSASignCtx);
 
 	return 1;
 }
@@ -116,24 +120,20 @@ int RSA_verify_signature(PUBLIC_KEY key, BYTES hash, SIZE hashlen, BYTES data, S
 	
 	if (AuthStatus == 1)
 	{
-		// printf("authentic\n");
 		authentic = true;
-		// EVP_MD_CTX_free(m_RSAVerifyCtx);
-		// printf("checkpoint4.5\n");
+		EVP_MD_CTX_free(m_RSAVerifyCtx);
 		return 1;
 	}
 	else if (AuthStatus == 0)
 	{
-		// printf("checkpoint5\n");
 		authentic = false;
-		// EVP_MD_CTX_free(m_RSAVerifyCtx);
+		EVP_MD_CTX_free(m_RSAVerifyCtx);
 		return 1;
 	}
 	else
 	{
-		// printf("checkpoint6\n");
 		authentic = false;
-		// EVP_MD_CTX_free(m_RSAVerifyCtx);
+		EVP_MD_CTX_free(m_RSAVerifyCtx);
 		return EVP_DigestVerifyFinal_ERROR;
 	}
 }
@@ -162,7 +162,7 @@ int RSA_encrypt(BYTES in, SIZE inlen, BYTES out, SIZE &outlen, PUBLIC_KEY key)
 		return EVP_PKEY_encrypt_ERROR;
 	}
 
-	// EVP_PKEY_CTX_free(encrypt_context);
+	EVP_PKEY_CTX_free(encrypt_context);
 
 	return 1;
 }
@@ -190,8 +190,8 @@ int RSA_decrypt(BYTES in, SIZE inlen, BYTES out, SIZE &outlen, PRIVATE_KEY key)
 	{
 		return EVP_PKEY_decrypt_ERROR;
 	}
-	// printf("checkpoint1\n");
-	// EVP_PKEY_CTX_free(decrypt_context);
-	// printf("checkpoint2\n");
+	
+	EVP_PKEY_CTX_free(decrypt_context);
+	
 	return 1;
 }

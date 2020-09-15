@@ -1,4 +1,4 @@
-./src/v3/rsa.o: ./src/v3/rsa.cc\
+./src/v4/rsa.o: ./src/v4/rsa.cc\
 ./include/v1/base64.h\
 ./include/v1/rsa.h\
 ./include/v1/typedefs.h\

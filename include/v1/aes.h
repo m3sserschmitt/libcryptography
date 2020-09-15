@@ -22,24 +22,24 @@ size_t get_AES_decrypted_size(SIZE inlen);
      * otherwise returns an appropriate negative error code.
      * 
      * encr: AES encryption context (returned by EVP_CIPHER_CTX_new method);
-     * key_data: AES cipher key;
+     * key: AES cipher key;
      * keylen: size of key;
      * salt: salt to be used in sha256 iterations;
      * rounds: number of sha256 iterations;
      */
-int AES_encrypt_init(ENCRYPT_CTX encr, BYTES key_data, SIZE keylen, BYTES salt, int rounds);
+int AES_encrypt_init(ENCRYPT_CTX encr, BYTES key, SIZE keylen, BYTES salt, int rounds);
 
 /*
      * Initialize AES decryption context. Returns 1 if initialization successful, 
      * otherwise returns an appropriate negative error code.
      * 
      * decr: AES decryption context (returned by EVP_CIPHER_CTX_new method);
-     * key_data: AES cipher key;
+     * key: AES cipher key;
      * keylen: size of key;
      * salt: salt to be used in sha256 iterations;
      * rounds: number of sha256 iterations;
      */
-int AES_decrypt_init(DECRYPT_CTX decr, BYTES key_data, SIZE keylen, BYTES salt, int rounds);
+int AES_decrypt_init(DECRYPT_CTX decr, BYTES key, SIZE keylen, BYTES salt, int rounds);
 
 /*
      * Initialize AES for encryption and decryption. Returns 1 if successful,
@@ -53,6 +53,13 @@ int AES_decrypt_init(DECRYPT_CTX decr, BYTES key_data, SIZE keylen, BYTES salt, 
      * decr: if successful, contains decryption cipher context object;
      */
 int AES_init(BYTES key, SIZE keylen, BYTES salt, int rounds, ENCRYPT_CTX encr, DECRYPT_CTX decr);
+
+/*
+     * Free encryption / decryption context;
+     * 
+     * ctx: context to be freed;
+     */
+void AES_free_context(CONTEXT ctx);
 
 /*
      * Performs AES encryption. Return 1 if successful, otherwise returns an appropriate
@@ -77,3 +84,11 @@ int AES_encrypt(ENCRYPT_CTX encr, BYTES in, SIZE inlen, BYTES out, SIZE &outlen)
      * outlen: decrypted data length;
      */
 int AES_decrypt(DECRYPT_CTX decr, BYTES in, SIZE inlen, BYTES out, SIZE &outlen);
+
+#ifndef AES_H_1
+#define AES_H_1
+
+#define AES_get_encrypted_size(inlen) get_AES_encrypted_size(inlen)
+#define AES_get_decrypted_size(inlen) get_AES_decrypted_size(inlen)
+
+#endif

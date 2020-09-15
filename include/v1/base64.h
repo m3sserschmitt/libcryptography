@@ -41,3 +41,12 @@ void base64_decode(BASE64 in, BYTES out, SIZE &outlen);
      * out: base64 encoded data;
      */
 void base64_encode(BYTES in, SIZE inlen, BASE64 out);
+
+#ifndef BASE64_H_1
+#define BASE64_h_1
+
+#define base64_get_decoded_length(inlen) get_decoded_length(inlen)
+#define get_decoded_length(in) get_decoded_length(in)
+#define base64_get_encoded_length(inlen) get_encoded_length(inlen)
+
+#endif

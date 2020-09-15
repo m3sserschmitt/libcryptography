@@ -10,15 +10,18 @@ size_t get_AES_encrypted_size(SIZE inlen)
 
 size_t get_AES_decrypted_size(SIZE inlen)
 {
-	return inlen - AES_BLOCK_SIZE;
+	return inlen;
 }
 
-int AES_encrypt_init(ENCRYPT_CTX encr, BYTES key_data, SIZE keylen, BYTES salt, int rounds)
+int AES_encrypt_init(ENCRYPT_CTX encr, BYTES key, SIZE keylen, BYTES salt, int rounds)
 {
-	unsigned char key[64] = {0};
-	unsigned char iv[64] = {0};
+	unsigned char *key_data = (unsigned char *) malloc(64);
+	unsigned char *iv_data = (unsigned char *) malloc(64);
 
-	if (EVP_BytesToKey(EVP_aes_256_cbc(), EVP_sha256(), salt, key_data, keylen, rounds, key, iv) != 32)
+	memset(key_data, 0, 64);
+	memset(iv_data, 0, 64);
+
+	if (EVP_BytesToKey(EVP_aes_256_cbc(), EVP_sha256(), salt, key, keylen, rounds, key_data, iv_data) != 32)
 	{
 		return EVP_BytesToKey_ERROR;
 	}
@@ -28,20 +31,26 @@ int AES_encrypt_init(ENCRYPT_CTX encr, BYTES key_data, SIZE keylen, BYTES salt, 
 		return EVP_CIPHER_CTX_init_ERROR;
 	}
 
-	if (EVP_EncryptInit_ex(encr, EVP_aes_256_cbc(), NULL, key, iv) <= 0)
+	if (EVP_EncryptInit_ex(encr, EVP_aes_256_cbc(), NULL, key_data, iv_data) <= 0)
 	{
 		return EVP_EncryptInit_ex_ERROR;
 	}
 
+	free(key_data);
+	free(iv_data);
+
 	return 1;
 }
 
-int AES_decrypt_init(DECRYPT_CTX decr, BYTES key_data, SIZE keylen, BYTES salt, int rounds)
+int AES_decrypt_init(DECRYPT_CTX decr, BYTES key, SIZE keylen, BYTES salt, int rounds)
 {
-	unsigned char key[64] = {0};
-	unsigned char iv[64] = {0};
+	unsigned char *key_data = (unsigned char *) malloc(64);
+	unsigned char *iv_data = (unsigned char *) malloc(64);
 
-	if (EVP_BytesToKey(EVP_aes_256_cbc(), EVP_sha256(), salt, key_data, keylen, rounds, key, iv) != 32)
+	memset(key_data, 0, 64);
+	memset(iv_data, 0, 64);
+
+	if (EVP_BytesToKey(EVP_aes_256_cbc(), EVP_sha256(), salt, key, keylen, rounds, key_data, iv_data) != 32)
 	{
 		return EVP_BytesToKey_ERROR;
 	}
@@ -51,10 +60,13 @@ int AES_decrypt_init(DECRYPT_CTX decr, BYTES key_data, SIZE keylen, BYTES salt, 
 		return EVP_CIPHER_CTX_init_ERROR;
 	}
 
-	if (EVP_DecryptInit_ex(decr, EVP_aes_256_cbc(), NULL, key, iv) <= 0)
+	if (EVP_DecryptInit_ex(decr, EVP_aes_256_cbc(), NULL, key_data, iv_data) <= 0)
 	{
 		return EVP_DecryptInit_ex_ERROR;
 	}
+
+	free(key_data);
+	free(iv_data);
 
 	return 1;
 }
@@ -69,6 +81,10 @@ int AES_init(BYTES key, SIZE keylen, BYTES salt, int rounds, ENCRYPT_CTX encr, D
 	}
 
 	return AES_decrypt_init(decr, key, keylen, salt, rounds);
+}
+
+void AES_free_context(CONTEXT ctx) {
+	EVP_CIPHER_CTX_free(ctx);
 }
 
 int AES_encrypt(ENCRYPT_CTX encr, BYTES in, SIZE inlen, BYTES out, SIZE &outlen)

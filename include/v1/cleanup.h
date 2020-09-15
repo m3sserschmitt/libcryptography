@@ -4,7 +4,7 @@
 #define MEMORY_H
 
 template <typename T, typename... Args>
-void cleanup(T t)
+void cryptography_cleanup(T t)
 {
     if (t)
     {
@@ -13,7 +13,7 @@ void cleanup(T t)
 }
 
 template <typename T, typename... Args>
-void cleanup(T t, Args... args)
+void cryptography_cleanup(T t, Args... args)
 {
     if (t)
     {
@@ -24,7 +24,7 @@ void cleanup(T t, Args... args)
 }
 
 template <typename... Args>
-void free_memory(Args... args)
+void cryptography_free(Args... args)
 {
     cleanup(args...);
 }

@@ -1,4 +1,5 @@
 #include <string>
+#include "v1/typedefs.h"
 
 #ifndef HASH_H
 #define HASH_H

@@ -13,7 +13,9 @@
 ./include/v2/base64.h\
 ./include/v2/cryptography.h\
 ./include/v2/rsa.h\
-./include/v2/sha.h\
 ./include/v3/aes.h\
 ./include/v3/cryptography.h\
-./include/v3/rsa.h
+./include/v3/rsa.h\
+./include/v4/aes.h\
+./include/v4/cryptography.h\
+./include/v4/rsa.h

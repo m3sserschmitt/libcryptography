@@ -4,6 +4,7 @@
 #include "sha.h"
 #include "errors.h"
 #include "cleanup.h"
+#include "typedefs.h"
 
 void init();
 

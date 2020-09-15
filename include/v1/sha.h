@@ -25,3 +25,25 @@ DIGEST compute_SHA256(PLAINTEXT in);
      */
 std::string sha256(DIGEST digest);
 
+/*
+     * Creates SHA256 hexdigest of provided data.
+     * 
+     * in: data to compute SHA256; 
+     * inlen: data length;
+     */
+std::string sha256(BYTES in, SIZE inlen);
+
+/*
+     * Creates SHA256 hexdigest of input data.
+     * 
+     * in: data to compute SHA256; 
+     */
+std::string sha256(std::string in);
+
+#ifndef SHA_H_1
+#define SHA_H_1
+
+#define sha256_calculate(in, inlen) compute_SHA256(in, inlen)
+#define sha256_message_digest(in) compute_SHA256(in)
+
+#endif

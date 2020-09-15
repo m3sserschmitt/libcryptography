@@ -1,30 +1,66 @@
 #include "../../include/v3/rsa.h"
+#include "../../include/v2/base64.h"
 
-#include <cstring>
+#include <string.h>
 
-int RSA_sign(PRIVATE_KEY key, BYTES in, SIZE inlen, BASE64 *signature)
+int get_RSA_encoded_size(KEY key)
 {
-    size_t required_memory = get_RSA_encoded_size(key) + 1;
-    *signature = (char *)malloc(required_memory);
-    memset(*signature, 0, required_memory);
-
-    return RSA_sign(key, in, inlen, *signature);
+	return get_encoded_length(get_RSA_size(key));
 }
 
-int RSA_encrypt(BYTES in, SIZE inlen, BASE64 *out, PUBLIC_KEY key)
+int RSA_sign(PRIVATE_KEY key, BYTES in, SIZE inlen, BASE64 signature)
 {
-    size_t required_memory = get_RSA_encoded_size(key) + 1;
-    *out = (char *)malloc(required_memory);
-    memset(*out, 0, required_memory);
+	size_t outlen;
+	int result = RSA_sign(key, in, inlen, (unsigned char *) signature, outlen);
 
-    return RSA_encrypt(in, inlen, *out, key);
+	if (result < 0)
+	{
+		return result;
+	}
+
+	base64_encode((unsigned char *)signature, outlen, signature);
+
+	return result;
 }
 
-int RSA_decrypt(BASE64 in, BYTES *out, SIZE &outlen, PRIVATE_KEY key)
+int RSA_verify_signature(PUBLIC_KEY key, BYTES in, SIZE inlen, BASE64 signature, bool &authentic)
 {
-    size_t required_memory = get_RSA_size(key) + 1;
-    *out = (unsigned char *)malloc(required_memory);
-    memset(*out, 0, required_memory);
-    
-    return RSA_decrypt(in, *out, outlen, key);
+	size_t encMessageLength;
+	unsigned char *encMessage;
+	
+	base64_decode(signature, &encMessage, encMessageLength);
+	
+	int result = RSA_verify_signature(key, encMessage, encMessageLength, in, inlen, authentic);
+	
+	free(encMessage);
+	
+	return result;
+}
+
+int RSA_encrypt(BYTES in, SIZE inlen, BASE64 out, PUBLIC_KEY key)
+{
+	size_t outlen;
+	int result = RSA_encrypt(in, inlen, (unsigned char *)out, outlen, key);
+
+	if (result < 0)
+	{
+		return result;
+	}
+
+	base64_encode((unsigned char *)out, outlen, out);
+
+	return result;
+}
+
+int RSA_decrypt(BASE64 in, BYTES out, SIZE &outlen, PRIVATE_KEY key)
+{
+	size_t decoded_length;
+	unsigned char *decoded;
+	base64_decode(in, &decoded, decoded_length);
+	
+	int result = RSA_decrypt(decoded, decoded_length, out, outlen, key);
+	
+	free(decoded);
+
+	return result;
 }
