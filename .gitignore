@@ -1,4 +1,4 @@
 *.so.*
 *.o
 .vscode
-mfc.config.json
+*mfc.config.json

@@ -74,7 +74,7 @@ void base64_decode(BASE64 in, BYTES out, SIZE &outlen) {
     int val=0, valb=-8;
     unsigned char *addr = out_buffer;
 
-    for (char *c = in; *c; c++) {
+    for (char *c = in; c; c++) {
         if (T[*c] == -1) break;
         val = (val<<6) + T[*c];
         valb += 6;

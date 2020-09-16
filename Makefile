@@ -19,3 +19,9 @@ libcryptography.so.4.0.1: $(OBJECTS)
 clean:
 	$(RM) $(OBJECTS) $(TARGET)
 
+test:
+	cd tests && make && ./tests
+
+clean_all:
+	make clean && cd tests && make clean
+

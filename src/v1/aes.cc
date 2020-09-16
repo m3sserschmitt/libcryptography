@@ -113,6 +113,8 @@ int AES_encrypt(ENCRYPT_CTX encr, BYTES in, SIZE inlen, BYTES out, SIZE &outlen)
 	}
 
 	outlen = c_len + f_len;
+	out[outlen] = 0;
+	
 	return 1;
 }
 
@@ -137,6 +139,7 @@ int AES_decrypt(DECRYPT_CTX decr, BYTES in, SIZE inlen, BYTES out, SIZE &outlen)
 	}
 
 	outlen = p_len + f_len;
+	out[outlen] = 0;
 
 	return 1;
 }
