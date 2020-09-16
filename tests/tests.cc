@@ -43,11 +43,11 @@ std::string private_key_pem = "-----BEGIN RSA PRIVATE KEY-----\n"
 bool test_AES()
 {
     PLAINTEXT text = (PLAINTEXT)"AES encryption & decryption test.";
-    PLAINTEXT aes_key = (PLAINTEXT)"7830f<iuh8uf<0gH";
+    PLAINTEXT aes_key = (PLAINTEXT)"12345";
 
     ENCRYPT_CTX encr;
     DECRYPT_CTX decr;
-    int result = AES_init((BYTES)aes_key, strlen(aes_key), nullptr, 5, &encr, &decr);
+    int result = AES_init((BYTES)aes_key, strlen(aes_key), nullptr, 15, &encr, &decr);
 
     printf("AES_init: %i\n", result);
 

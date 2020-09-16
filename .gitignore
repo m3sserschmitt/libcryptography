@@ -2,3 +2,4 @@
 *.o
 .vscode
 *mfc.config.json
+tests/tests

@@ -1,10 +1,10 @@
 CC=g++
-TARGET=libcryptography.so.4.0.1
+TARGET=libcryptography.so.4.0.3
 CC_DEPS :=
 OBJECTS :=
 RM=rm -v
 
-all: libcryptography.so.4.0.1
+all: libcryptography.so.4.0.3
 
 -include $(CC_DEPS)
 -include ./src/subdir.mk
@@ -13,7 +13,7 @@ all: libcryptography.so.4.0.1
 -include ./src/v3/subdir.mk
 -include ./src/v4/subdir.mk
 
-libcryptography.so.4.0.1: $(OBJECTS)
+libcryptography.so.4.0.3: $(OBJECTS)
 	$(CC) $(OBJECTS) -lcrypto -shared -o $(TARGET)
 
 clean:

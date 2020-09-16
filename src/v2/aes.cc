@@ -11,7 +11,7 @@ int AES_encrypt_init(ENCRYPT_CTX *encr, BYTES key, SIZE keylen, BYTES salt, int 
 int AES_decrypt_init(DECRYPT_CTX *decr, BYTES key, SIZE keylen, BYTES salt, int rounds)
 {
     *decr = EVP_CIPHER_CTX_new();
-    return AES_encrypt_init(*decr, key, keylen, salt, rounds);
+    return AES_decrypt_init(*decr, key, keylen, salt, rounds);
 }
 
 int AES_init(BYTES key, SIZE keylen, BYTES salt, int rounds, ENCRYPT_CTX *encr, DECRYPT_CTX *decr)

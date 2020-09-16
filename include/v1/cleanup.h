@@ -20,13 +20,13 @@ void cryptography_cleanup(T t, Args... args)
         free(t);
     }
     
-    cleanup(args...);
+    cryptography_cleanup(args...);
 }
 
 template <typename... Args>
 void cryptography_free(Args... args)
 {
-    cleanup(args...);
+    cryptography_cleanup(args...);
 }
 
 #endif
