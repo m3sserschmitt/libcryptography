@@ -8,6 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
+This project is intended for Linux operating systems.
 You need `OpenSSL` library to be installed on your machine. Type this command in your terminal:
 
 `openssl version`
