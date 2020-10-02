@@ -22,6 +22,6 @@ clean:
 test:
 	cd tests && make && ./tests
 
-clean_all:
-	make clean && cd tests && make clean
+clean_test:
+	cd tests && make clean
 
