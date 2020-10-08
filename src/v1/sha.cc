@@ -11,7 +11,16 @@ DIGEST compute_SHA256(BYTES in, SIZE inlen)
 
     SHA256(in, inlen, output_buffer);
 
-    return (int *)output_buffer;
+    DIGEST digest = (DIGEST)malloc(32);
+
+    for (int i = 0; i < 32; i++)
+    {
+        digest[i] = (int)output_buffer[i];
+    }
+
+    free(output_buffer);
+
+    return digest;
 }
 
 DIGEST compute_SHA256(PLAINTEXT in)
@@ -32,10 +41,12 @@ std::string sha256(DIGEST digest)
     return shastr.str();
 }
 
-std::string sha256(std::string in) {
-    return sha256(compute_SHA256((char *) in.data()));
+std::string sha256(std::string in)
+{
+    return sha256(compute_SHA256((char *)in.data()));
 }
 
-std::string sha256(BYTES in, SIZE inlen) {
+std::string sha256(BYTES in, SIZE inlen)
+{
     return sha256(compute_SHA256(in, inlen));
 }

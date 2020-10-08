@@ -29,7 +29,6 @@ int AES_decrypt(DECRYPT_CTX decr, BASE64 in, BYTES *out, SIZE &outlen)
     base64_decode(in, &in_buffer, inlen);
 
     int result = AES_decrypt(decr, in_buffer, inlen, out, outlen);
-    // printf("outlen: %i\n", outlen);
     free(in_buffer);
 
     return result;

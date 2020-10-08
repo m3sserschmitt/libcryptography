@@ -166,7 +166,6 @@ bool base64_encode_test()
     return test_result;
 }
 
-
 bool print_result(const char *t, bool r) {
     printf(t);
     switch (r)
@@ -181,6 +180,20 @@ bool print_result(const char *t, bool r) {
     }
 
     return r;
+}
+
+bool test_sha() {
+    PLAINTEXT text = (PLAINTEXT) "sha256 hash test.";
+    Hash hash = Hash(text);
+
+    printf("[+] Plaintext: %s\n", text);
+    printf("[+] Calculated hash: %s\n", hash.hexdigest);
+
+    bool result = not strcmp(hash.hexdigest, "feef4798c260a8c1057b24b1909c08023d23400d57e37f0a759b433c72092320");
+
+    printf("[+] Result: %d\n", result);
+
+    return result;
 }
 
 int main()
@@ -198,8 +211,11 @@ int main()
 
     bool RSA_encrypt = print_result("RSA encryption test: ", test_RSA());
     printf("\n");
+
+    bool sha = print_result("SHA256 test: ", test_sha());
+    printf("\n");
     
-    bool tests_passed = print_result("TESTS RESULT: ", base64 and AES and sign and RSA_encrypt);
+    bool tests_passed = print_result("TESTS RESULT: ", base64 and AES and sign and RSA_encrypt and sha);
 
     cryptography_cleanup();
 
