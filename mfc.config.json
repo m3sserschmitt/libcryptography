@@ -1,0 +1,34 @@
+{
+  "TARGET": "libcryptography.so.4.0.5",
+  "CC": "cc",
+  "LD": "ld",
+  "C_FLAGS": [
+    "-c",
+    "-Wall",
+    "-fPIC"
+  ],
+  "INCLUDE_PATHS": ["include"],
+  "LIBS": ["crypto"],
+  "LD_FLAGS": [
+    "-soname libcryptography.so.4",
+    "-shared"
+  ],
+  "EXTENSIONS": [
+    "cc"
+  ],
+  "IGNORE_PATHS": [
+    ".git",
+    ".vscode",
+    "tests",
+    "build"
+  ],
+  "CUSTOM_TARGETS": {
+    "test": "cd ../tests/build && make && ./tests",
+    "clean_test": "cd ../tests/build && make clean",
+    "install": "mkdir -p -v /usr/local/include/libcryptography\n\tcp -r ../include/crypto /usr/local/include/libcryptography\n\tcp -v $(OUT) /usr/local/lib\n\tln -v -s -f /usr/local/lib/$(TARGET) /usr/local/lib/libcryptography.so.4 \n\tln -v -s -f /usr/local/lib/libcryptography.so.4 /usr/local/lib/libcryptography.so\n\tldconfig /usr/local/lib\n\t@echo [+] Headers installed at /usr/local/include/libcryptography\n\t@echo [+] Library installed at /usr/local/lib/$(TARGET)\n\t@echo Done."
+  },
+  "VERBOSE": false,
+  "RM": "rm -v",
+  "BUILD_DIRECTORY": "./build",
+  "BIN_DIRECTORY": "./build/lib"
+}
