@@ -29,11 +29,15 @@ Change the directory to newly downloaded source code:
 
 `cd /path/to/local/repository`
 
-You are ready to build the library. Type command:
+Then
+
+`cd build`
+
+You are ready to build the library:
 
 `make`
 
-Last command will create the file `./build/lib/libcryptography.so.*` which can be linked in other C/C++ projects.
+Last command will create the file `./build/libcryptography.so.*` which can be linked in other C/C++ projects.
 
 You can check if everything works fine using command:
 
@@ -65,3 +69,4 @@ Keep in mind that this code it's just a **proof of concept** of using `OpenSSL` 
 
 * **_New in version v0.0.5 (November 2020):_**
     * Code refactoring and bugs fixed.
+    * This release it's not backward compatible with previous releases.
