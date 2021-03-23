@@ -1,4 +1,3 @@
 .vscode
 *.o
 *.so.*
-./tests/build/tests

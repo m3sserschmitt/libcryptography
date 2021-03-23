@@ -39,13 +39,7 @@ You are ready to build the library:
 
 Last command will create the file `./build/libcryptography.so.*` which can be linked in other C/C++ projects.
 
-You can check if everything works fine using command:
-
-`make test`
-
-This will compile a test programm called `tests` located into `tests` directory. A couple of tests will be performed and if everything it's ok, you'll see at the end something like this: `TESTS RESULT: SUCCESS!`.
-
-Also you can checkout `./tests/tests.cc` file for some examples on basic encryption & decryption with AES or RSA, RSA signing & verification with RSA and base64 encoding & decoding.
+Also you can checkout `./tests/main.cc` file for some examples on basic encryption & decryption with AES or RSA, RSA signing & verification with RSA and base64 encoding & decoding.
 
 After you checked out encryption / decryption, you may want to install the library on your system. By default, headers will be located into `/usr/local/include/libcryptography` and library will be located into `/usr/local/lib` directory. Type:
 
@@ -63,10 +57,15 @@ This project is licensed under the MIT License. Feel free to copy, modify and di
 
 ## Disclaimer
 
-Keep in mind that this code it's just a **proof of concept** of using `OpenSSL` for basic cryptography and **not** intended for production use.
+This code is just a **proof of concept** of using `OpenSSL` for basic cryptography. Use it on your own risk.
 
 ## Changelog
 
-* **_New in version v0.0.5 (November 2020):_**
+* **_New in version v5.0.0 (March 2021):_**
+    * All code was rewritten.
+    * AES, RSA (encrypt, decrypt, sign, verify) and base64 available.
+    * Not backward compatible.
+
+* **_New in version v4.0.5 (November 2020):_**
     * Code refactoring and bugs fixed.
     * This release it's not backward compatible with previous releases.

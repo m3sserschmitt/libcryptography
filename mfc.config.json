@@ -1,16 +1,20 @@
 {
-  "TARGET": "libcryptography.so.4.0.5",
-  "CC": "cc",
+  "TARGET": "libcryptography.so.5.0.0",
+  "CC": "g++",
   "LD": "ld",
   "C_FLAGS": [
     "-c",
     "-Wall",
     "-fPIC"
   ],
-  "INCLUDE_PATHS": ["include"],
-  "LIBS": ["crypto"],
+  "INCLUDE_PATHS": [
+    "include"
+  ],
+  "LIBS": [
+    "crypto"
+  ],
   "LD_FLAGS": [
-    "-soname libcryptography.so.4",
+    "-soname libcryptography.so.5",
     "-shared"
   ],
   "EXTENSIONS": [
@@ -23,9 +27,7 @@
     "build"
   ],
   "CUSTOM_TARGETS": {
-    "test": "cd ../tests/build && make && ./tests",
-    "clean_test": "cd ../tests/build && make clean",
-    "install": "mkdir -p -v /usr/local/include/libcryptography\n\tcp -r ../include/crypto /usr/local/include/libcryptography\n\tcp -v $(OUT) /usr/local/lib\n\tln -v -s -f /usr/local/lib/$(TARGET) /usr/local/lib/libcryptography.so.4 \n\tln -v -s -f /usr/local/lib/libcryptography.so.4 /usr/local/lib/libcryptography.so\n\tldconfig /usr/local/lib\n\t@echo [+] Headers installed at /usr/local/include/libcryptography\n\t@echo [+] Library installed at /usr/local/lib/$(TARGET)\n\t@echo Done."
+    "test": "cd ../tests && make && ./tests"
   },
   "VERBOSE": false,
   "RM": "rm -v",

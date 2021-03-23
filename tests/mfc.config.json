@@ -1,9 +1,25 @@
 {
-    "target": "tests",
-    "cc": "g++",
-    "ld": "g++",
-    "extensions": ["cc"],
-    "c_flags": ["-c", "-Wall"],
-    "include_paths": ["../include"],
-    "ld_flags": ["../../build/libcryptography.so.*"]
+  "TARGET": "tests",
+  "CC": "g++",
+  "LD": "g++",
+  "C_FLAGS": [
+    "-c",
+    "-Wall"
+  ],
+  "LD_FLAGS": [
+      "../build/libcryptography.so.*"
+  ],
+  "LIBS": [],
+  "INCLUDE_PATHS": [
+      "../include"
+  ],
+  "EXTENSIONS": [
+    "cc"
+  ],
+  "IGNORE_PATHS": [],
+  "CUSTOM_TARGETS": {},
+  "VERBOSE": false,
+  "RM": "rm -v",
+  "BUILD_DIRECTORY": "./",
+  "BIN_DIRECTORY": "./"
 }
