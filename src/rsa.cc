@@ -173,9 +173,9 @@ int RSA_encrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 		return -1;
 	}
 
-	*out = (BYTES)calloc(outlen + 1, sizeof(BYTE));
+	*out or (*out = (BYTES)calloc(outlen + 1, sizeof(BYTE)));
 
-	if (EVP_PKEY_encrypt(ctx->encr, *out, &outlen, in, inlen) < 0)
+	if (EVP_PKEY_encrypt(ctx->encr, *out, &outlen, in, inlen) <= 0)
 	{
 		return -1;
 	}
@@ -192,7 +192,7 @@ int RSA_decrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 		return -1;
 	}
 
-	*out = (BYTES)calloc(outlen + 1, sizeof(BYTE));
+	*out or (*out = (BYTES)calloc(outlen + 1, sizeof(BYTE)));
 
 	if (EVP_PKEY_decrypt(ctx->decr, *out, &outlen, in, inlen) <= 0)
 	{

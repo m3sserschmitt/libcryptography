@@ -25,3 +25,17 @@ clean:
 test:
 	cd ../tests && make && ./tests
 
+static:
+	ar -rvs libcryptography.a $(OBJECTS)
+
+install:
+	mkdir -p -v /usr/local/include/libcryptography
+	cp -r ../include/* /usr/local/include/libcryptography
+	cp -v $(OUT) /usr/local/lib
+	ln -v -s -f /usr/local/lib/$(TARGET) /usr/local/lib/libcryptography.so.5 
+	ln -v -s -f /usr/local/lib/libcryptography.so.5 /usr/local/lib/libcryptography.so
+	ldconfig /usr/local/lib
+	@echo [+] Headers installed at /usr/local/include/libcryptography
+	@echo [+] Library installed at /usr/local/lib/$(TARGET)
+	@echo Done.
+

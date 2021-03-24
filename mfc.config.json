@@ -24,10 +24,13 @@
     ".git",
     ".vscode",
     "tests",
-    "build"
+    "build",
+    "cryptutil"
   ],
   "CUSTOM_TARGETS": {
-    "test": "cd ../tests && make && ./tests"
+    "test": "cd ../tests && make && ./tests",
+    "static": "ar -rvs libcryptography.a $(OBJECTS)",
+    "install": "mkdir -p -v /usr/local/include/libcryptography\n\tcp -r ../include/* /usr/local/include/libcryptography\n\tcp -v $(OUT) /usr/local/lib\n\tln -v -s -f /usr/local/lib/$(TARGET) /usr/local/lib/libcryptography.so.5 \n\tln -v -s -f /usr/local/lib/libcryptography.so.5 /usr/local/lib/libcryptography.so\n\tldconfig /usr/local/lib\n\t@echo [+] Headers installed at /usr/local/include/libcryptography\n\t@echo [+] Library installed at /usr/local/lib/$(TARGET)\n\t@echo Done."
   },
   "VERBOSE": false,
   "RM": "rm -v",
