@@ -18,6 +18,8 @@ int RSA_init_key(std::string PEM, pem_password_cb *cb, BYTES passphrase, KEY_TYP
 
 int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op);
 
+int PEM_to_DER(std::string PEM, BYTES *der);
+
 int RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign);
 
 int RSA_verify(RSA_CRYPTO ctx, BYTES sign, SIZE signlen, BYTES data, SIZE datalen, bool &auth);

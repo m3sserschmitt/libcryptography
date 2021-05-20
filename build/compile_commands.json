@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/rujas/code_workspace/enigma4/cryptography/build",
+  "command": "/usr/bin/c++ -Dcryptography_EXPORTS -I/home/rujas/code_workspace/enigma4/cryptography/include -g -fPIC -o CMakeFiles/cryptography.dir/src/aes.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/aes.cc",
+  "file": "/home/rujas/code_workspace/enigma4/cryptography/src/aes.cc"
+},
+{
+  "directory": "/home/rujas/code_workspace/enigma4/cryptography/build",
+  "command": "/usr/bin/c++ -Dcryptography_EXPORTS -I/home/rujas/code_workspace/enigma4/cryptography/include -g -fPIC -o CMakeFiles/cryptography.dir/src/rsa.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/rsa.cc",
+  "file": "/home/rujas/code_workspace/enigma4/cryptography/src/rsa.cc"
+},
+{
+  "directory": "/home/rujas/code_workspace/enigma4/cryptography/build",
+  "command": "/usr/bin/c++ -Dcryptography_EXPORTS -I/home/rujas/code_workspace/enigma4/cryptography/include -g -fPIC -o CMakeFiles/cryptography.dir/src/base64.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/base64.cc",
+  "file": "/home/rujas/code_workspace/enigma4/cryptography/src/base64.cc"
+},
+{
+  "directory": "/home/rujas/code_workspace/enigma4/cryptography/build",
+  "command": "/usr/bin/c++ -Dcryptography_EXPORTS -I/home/rujas/code_workspace/enigma4/cryptography/include -g -fPIC -o CMakeFiles/cryptography.dir/src/util.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/util.cc",
+  "file": "/home/rujas/code_workspace/enigma4/cryptography/src/util.cc"
+}
+]

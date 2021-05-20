@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblcryptography.a CMakeFiles/lcryptography.dir/src/aes.cc.o CMakeFiles/lcryptography.dir/src/rsa.cc.o CMakeFiles/lcryptography.dir/src/base64.cc.o
+/usr/bin/ranlib liblcryptography.a

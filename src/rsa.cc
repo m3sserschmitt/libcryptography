@@ -1,9 +1,13 @@
 #include "rsa.hh"
+#include "base64.hh"
 
+#include <vector>
 #include <string>
 #include <openssl/evp.h>
 
 using namespace std;
+
+extern "C" vector<string> split(string str, string sep, int max_split);
 
 RSA_CRYPTO RSA_CRYPTO_new()
 {
@@ -96,6 +100,23 @@ int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 		return -1;
 	}
 */
+}
+
+int PEM_to_DER(std::string PEM, BYTES *der)
+{
+	vector<string> tokens = split(PEM, "\n", -1);
+
+	vector<string>::iterator it = tokens.begin();
+	vector<string>::iterator it_end = tokens.end();
+
+	string pem;
+
+	for (it++, it_end--; it != it_end; it++)
+	{
+		pem += *it;
+	}
+
+	return base64_decode((BASE64)pem.data(), der);
 }
 
 int RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)
