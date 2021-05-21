@@ -1,5 +1,6 @@
 #include "rsa.hh"
 
+#include <math.h>
 #include <string>
 #include <openssl/evp.h>
 
@@ -129,8 +130,25 @@ int RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)
 	return signlen;
 }
 
+static size_t get_rsa_size(size_t inlen)
+{
+	size_t p = log(inlen) / log(2);
+	size_t m = pow(2, p);
+	size_t delta = inlen % m;
+
+	if(not delta)
+	{
+		return inlen;
+	}
+
+    (delta < m / 2 and (inlen -= delta)) or (inlen += m - delta);
+
+	return inlen;
+}
+
 int RSA_verify(RSA_CRYPTO ctx, BYTES sign, SIZE signlen, BYTES data, SIZE datalen, bool &auth)
 {
+	signlen = get_rsa_size(signlen) - 1;
 	auth = false;
 
 	if (EVP_DigestVerifyInit(ctx->verif, 0, EVP_sha256(), 0, ctx->pubkey) <= 0)
@@ -185,6 +203,7 @@ int RSA_encrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 
 int RSA_decrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 {
+	inlen = get_rsa_size(inlen) - 1;
 	SIZE outlen;
 
 	if (EVP_PKEY_decrypt(ctx->decr, 0, &outlen, in, inlen) <= 0)
