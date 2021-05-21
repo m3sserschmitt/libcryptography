@@ -1,0 +1,8 @@
+Package: libcryptography5
+Version: 5.0.0
+Section: libs
+Priority: optional
+Architecture: all
+Essential: no
+Maintainer: Romulus-Emanuel Ruja
+Description: Cryptographic library

@@ -1,0 +1,9 @@
+Package: cryptutil
+Version: 1.0.0
+Section: custom
+Priority: optional
+Architecture: all
+Depends: libcryptography5 (>= 5.0.0)
+Essential: no
+Maintainer: Romulus-Emanuel Ruja
+Description: Cryptographic tool
