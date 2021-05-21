@@ -14,5 +14,7 @@ CMakeFiles/cryptography.dir/src/rsa.cc.o: ../include/rsa.hh
 CMakeFiles/cryptography.dir/src/rsa.cc.o: ../include/types.hh
 CMakeFiles/cryptography.dir/src/rsa.cc.o: ../src/rsa.cc
 
-CMakeFiles/cryptography.dir/src/util.cc.o: ../src/util.cc
+CMakeFiles/cryptography.dir/src/sha.cc.o: ../include/sha.hh
+CMakeFiles/cryptography.dir/src/sha.cc.o: ../include/types.hh
+CMakeFiles/cryptography.dir/src/sha.cc.o: ../src/sha.cc
 

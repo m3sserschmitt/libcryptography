@@ -620,32 +620,32 @@ src/rsa.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cryptography.dir/build.make CMakeFiles/cryptography.dir/src/rsa.cc.s
 .PHONY : src/rsa.cc.s
 
-src/util.o: src/util.cc.o
+src/sha.o: src/sha.cc.o
 
-.PHONY : src/util.o
+.PHONY : src/sha.o
 
 # target to build an object file
-src/util.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cryptography.dir/build.make CMakeFiles/cryptography.dir/src/util.cc.o
-.PHONY : src/util.cc.o
+src/sha.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cryptography.dir/build.make CMakeFiles/cryptography.dir/src/sha.cc.o
+.PHONY : src/sha.cc.o
 
-src/util.i: src/util.cc.i
+src/sha.i: src/sha.cc.i
 
-.PHONY : src/util.i
+.PHONY : src/sha.i
 
 # target to preprocess a source file
-src/util.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cryptography.dir/build.make CMakeFiles/cryptography.dir/src/util.cc.i
-.PHONY : src/util.cc.i
+src/sha.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cryptography.dir/build.make CMakeFiles/cryptography.dir/src/sha.cc.i
+.PHONY : src/sha.cc.i
 
-src/util.s: src/util.cc.s
+src/sha.s: src/sha.cc.s
 
-.PHONY : src/util.s
+.PHONY : src/sha.s
 
 # target to generate assembly for a file
-src/util.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cryptography.dir/build.make CMakeFiles/cryptography.dir/src/util.cc.s
-.PHONY : src/util.cc.s
+src/sha.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cryptography.dir/build.make CMakeFiles/cryptography.dir/src/sha.cc.s
+.PHONY : src/sha.cc.s
 
 # Help Target
 help:
@@ -696,9 +696,9 @@ help:
 	@echo "... src/rsa.o"
 	@echo "... src/rsa.i"
 	@echo "... src/rsa.s"
-	@echo "... src/util.o"
-	@echo "... src/util.i"
-	@echo "... src/util.s"
+	@echo "... src/sha.o"
+	@echo "... src/sha.i"
+	@echo "... src/sha.s"
 .PHONY : help
 
 

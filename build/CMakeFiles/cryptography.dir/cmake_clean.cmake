@@ -2,7 +2,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/cryptography.dir/src/aes.cc.o"
   "CMakeFiles/cryptography.dir/src/base64.cc.o"
   "CMakeFiles/cryptography.dir/src/rsa.cc.o"
-  "CMakeFiles/cryptography.dir/src/util.cc.o"
+  "CMakeFiles/cryptography.dir/src/sha.cc.o"
   "libcryptography.pdb"
   "libcryptography.so"
 )

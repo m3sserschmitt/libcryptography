@@ -329,6 +329,15 @@ SLURM_SRUN_COMMAND:FILEPATH=SLURM_SRUN_COMMAND-NOTFOUND
 //Path to a program.
 SVNCOMMAND:FILEPATH=/usr/bin/svn
 
+//Dependencies for the target
+cryptogr_LIB_DEPENDS:STATIC=general;crypto;
+
+//Dependencies for the target
+cryptography-dev_LIB_DEPENDS:STATIC=general;crypto;
+
+//Dependencies for the target
+cryptography_LIB_DEPENDS:STATIC=general;crypto;
+
 //Value Computed by CMake
 libcryptography_BINARY_DIR:STATIC=/home/rujas/code_workspace/enigma4/cryptography/build
 

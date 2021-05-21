@@ -1,10 +1,50 @@
 #include "rsa.hh"
+#include "base64.hh"
 
 #include <math.h>
 #include <string>
+#include <vector>
 #include <openssl/evp.h>
 
 using namespace std;
+
+static vector<string> split(string str, string sep, int max_split)
+{
+    vector<string> tokens;
+    
+    size_t sep_pos;
+    int split_index = 0;
+    
+    if (!str.size())
+        return tokens;
+
+    tokens.reserve(10);
+
+    do
+    {
+        split_index++;
+        sep_pos = str.find(sep);
+        
+        // tokens.resize(tokens.size() + 1);
+        tokens.push_back(str.substr(0, sep_pos));
+        if (sep_pos == string::npos) {
+            // tokens.resize(split_index);
+            return tokens;
+        }
+            
+        str = str.substr(sep_pos + sep.size());
+        if (split_index == max_split && str.size())
+        {
+            
+            // tokens.resize(tokens.size() + 1);
+            tokens.push_back(str);
+            // tokens.resize(split_index + 1);
+            return tokens;
+        }
+    } while (true);
+
+    return tokens;
+}
 
 RSA_CRYPTO RSA_CRYPTO_new()
 {
@@ -86,17 +126,23 @@ int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 	}
 
 	return 0;
-	/*
-	SIGN_CTX *signctx = 0;
 
-	ktype == PRIVATE_KEY and (signctx = &ctx->sign);
-	ktype == PUBLIC_KEY and (signctx = &ctx->verif);
+}
 
-	if (not *signctx and not (*signctx = EVP_MD_CTX_create()))
+int PEM_key_to_DER(string PEM, BYTES *out)
+{
+	vector<string> tokens = split(PEM, "\n", -1);
+	vector<string>::iterator it = tokens.begin() + 1;
+	vector<string>::iterator it_end = tokens.end() - 1;
+
+	string base64_key;
+
+	for(; it != it_end; it ++)
 	{
-		return -1;
+		base64_key += *it;
 	}
-*/
+
+	return base64_decode((BASE64)base64_key.data(), out);
 }
 
 int RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)

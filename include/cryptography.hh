@@ -2,3 +2,4 @@
 #include "rsa.hh"
 #include "base64.hh"
 #include "types.hh"
+#include "sha.hh"

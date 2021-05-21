@@ -1738,6 +1738,42 @@
 			"value" : "/usr/bin/svn"
 		},
 		{
+			"name" : "cryptogr_LIB_DEPENDS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Dependencies for the target"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "general;crypto;"
+		},
+		{
+			"name" : "cryptography-dev_LIB_DEPENDS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Dependencies for the target"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "general;crypto;"
+		},
+		{
+			"name" : "cryptography_LIB_DEPENDS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Dependencies for the target"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "general;crypto;"
+		},
+		{
 			"name" : "libcryptography_BINARY_DIR",
 			"properties" : 
 			[

@@ -115,25 +115,25 @@ CMakeFiles/cryptography.dir/src/base64.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cryptography.dir/src/base64.cc.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rujas/code_workspace/enigma4/cryptography/src/base64.cc -o CMakeFiles/cryptography.dir/src/base64.cc.s
 
-CMakeFiles/cryptography.dir/src/util.cc.o: CMakeFiles/cryptography.dir/flags.make
-CMakeFiles/cryptography.dir/src/util.cc.o: ../src/util.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rujas/code_workspace/enigma4/cryptography/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cryptography.dir/src/util.cc.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cryptography.dir/src/util.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/util.cc
+CMakeFiles/cryptography.dir/src/sha.cc.o: CMakeFiles/cryptography.dir/flags.make
+CMakeFiles/cryptography.dir/src/sha.cc.o: ../src/sha.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rujas/code_workspace/enigma4/cryptography/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cryptography.dir/src/sha.cc.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cryptography.dir/src/sha.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/sha.cc
 
-CMakeFiles/cryptography.dir/src/util.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cryptography.dir/src/util.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rujas/code_workspace/enigma4/cryptography/src/util.cc > CMakeFiles/cryptography.dir/src/util.cc.i
+CMakeFiles/cryptography.dir/src/sha.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cryptography.dir/src/sha.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rujas/code_workspace/enigma4/cryptography/src/sha.cc > CMakeFiles/cryptography.dir/src/sha.cc.i
 
-CMakeFiles/cryptography.dir/src/util.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cryptography.dir/src/util.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rujas/code_workspace/enigma4/cryptography/src/util.cc -o CMakeFiles/cryptography.dir/src/util.cc.s
+CMakeFiles/cryptography.dir/src/sha.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cryptography.dir/src/sha.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rujas/code_workspace/enigma4/cryptography/src/sha.cc -o CMakeFiles/cryptography.dir/src/sha.cc.s
 
 # Object files for target cryptography
 cryptography_OBJECTS = \
 "CMakeFiles/cryptography.dir/src/aes.cc.o" \
 "CMakeFiles/cryptography.dir/src/rsa.cc.o" \
 "CMakeFiles/cryptography.dir/src/base64.cc.o" \
-"CMakeFiles/cryptography.dir/src/util.cc.o"
+"CMakeFiles/cryptography.dir/src/sha.cc.o"
 
 # External object files for target cryptography
 cryptography_EXTERNAL_OBJECTS =
@@ -141,7 +141,7 @@ cryptography_EXTERNAL_OBJECTS =
 libcryptography.so: CMakeFiles/cryptography.dir/src/aes.cc.o
 libcryptography.so: CMakeFiles/cryptography.dir/src/rsa.cc.o
 libcryptography.so: CMakeFiles/cryptography.dir/src/base64.cc.o
-libcryptography.so: CMakeFiles/cryptography.dir/src/util.cc.o
+libcryptography.so: CMakeFiles/cryptography.dir/src/sha.cc.o
 libcryptography.so: CMakeFiles/cryptography.dir/build.make
 libcryptography.so: CMakeFiles/cryptography.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rujas/code_workspace/enigma4/cryptography/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library libcryptography.so"

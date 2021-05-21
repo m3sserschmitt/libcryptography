@@ -6,17 +6,9 @@
 
 #IncludeRegexTransform: 
 
-../include/base64.hh
+../include/sha.hh
 types.hh
 ../include/types.hh
-
-../include/rsa.hh
-types.hh
-../include/types.hh
-string
--
-openssl/pem.h
--
 
 ../include/types.hh
 cstddef
@@ -24,15 +16,17 @@ cstddef
 openssl/evp.h
 -
 
-/home/rujas/code_workspace/enigma4/cryptography/src/rsa.cc
-rsa.hh
-/home/rujas/code_workspace/enigma4/cryptography/src/rsa.hh
-base64.hh
-/home/rujas/code_workspace/enigma4/cryptography/src/base64.hh
-vector
+/home/rujas/code_workspace/enigma4/cryptography/src/sha.cc
+sha.hh
+/home/rujas/code_workspace/enigma4/cryptography/src/sha.hh
+openssl/sha.h
 -
-string
+stdlib.h
 -
-openssl/evp.h
+sstream
+-
+iomanip
+-
+string.h
 -
 

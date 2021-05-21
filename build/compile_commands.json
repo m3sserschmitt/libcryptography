@@ -16,7 +16,7 @@
 },
 {
   "directory": "/home/rujas/code_workspace/enigma4/cryptography/build",
-  "command": "/usr/bin/c++ -Dcryptography_EXPORTS -I/home/rujas/code_workspace/enigma4/cryptography/include -g -fPIC -o CMakeFiles/cryptography.dir/src/util.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/util.cc",
-  "file": "/home/rujas/code_workspace/enigma4/cryptography/src/util.cc"
+  "command": "/usr/bin/c++ -Dcryptography_EXPORTS -I/home/rujas/code_workspace/enigma4/cryptography/include -g -fPIC -o CMakeFiles/cryptography.dir/src/sha.cc.o -c /home/rujas/code_workspace/enigma4/cryptography/src/sha.cc",
+  "file": "/home/rujas/code_workspace/enigma4/cryptography/src/sha.cc"
 }
 ]
