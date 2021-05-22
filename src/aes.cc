@@ -1,6 +1,7 @@
 #include "aes.hh"
 
 #include <openssl/aes.h>
+#include <openssl/evp.h>
 
 static inline SIZE AES_get_encrypted_size(SIZE inlen)
 {
@@ -25,10 +26,10 @@ int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP o
         }
     }
 
-    AES_CTX *aes = 0;
+    EVP_CIPHER_CTX **aes = 0;
 
-    op == ENCRYPT and (aes = &ctx->encr);
-    op == DECRYPT and (aes = &ctx->decr);
+    op == ENCRYPT and (aes = (EVP_CIPHER_CTX **)&ctx->encr);
+    op == DECRYPT and (aes = (EVP_CIPHER_CTX **)&ctx->decr);
 
     if (not(*aes = EVP_CIPHER_CTX_new()))
     {
@@ -55,7 +56,7 @@ int AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
     int f_len = 0;
 
     /* allows reusing of 'e' for multiple encryption cycles */
-    if (EVP_EncryptInit_ex(ctx->encr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv) <= 0)
+    if (EVP_EncryptInit_ex((EVP_CIPHER_CTX *)ctx->encr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv) <= 0)
     {
         return -1;
     }
@@ -63,18 +64,18 @@ int AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
     /* update ciphertext, c_len is filled with the length of ciphertext generated,
     *len is the size of plaintext in bytes */
     *out or (*out = (BYTES)calloc(c_len + 1, sizeof(BYTE)));
-    if (not *out or EVP_EncryptUpdate(ctx->encr, *out, &c_len, in, inlen) <= 0)
+    if (not *out or EVP_EncryptUpdate((EVP_CIPHER_CTX *)ctx->encr, *out, &c_len, in, inlen) <= 0)
     {
         return -1;
     }
 
     /* update ciphertext with the final remaining bytes */
-    if (EVP_EncryptFinal_ex(ctx->encr, *out + c_len, &f_len) <= 0)
+    if (EVP_EncryptFinal_ex((EVP_CIPHER_CTX *)ctx->encr, *out + c_len, &f_len) <= 0)
     {
         return -1;
     }
 
-    EVP_CIPHER_CTX_cleanup(ctx->encr);
+    EVP_CIPHER_CTX_cleanup((EVP_CIPHER_CTX *)ctx->encr);
 
     SIZE outlen = c_len + f_len;
     (*out)[outlen] = 0;
@@ -90,23 +91,23 @@ int AES_decrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
     /* plaintext will always be equal to or lesser than length of ciphertext*/
     int p_len = inlen, f_len = 0;
 
-    if (EVP_DecryptInit_ex(ctx->decr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv) <= 0)
+    if (EVP_DecryptInit_ex((EVP_CIPHER_CTX *)ctx->decr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv) <= 0)
     {
         return -1;
     }
 
     *out or (*out = (BYTES)calloc(p_len + 1, sizeof(BYTE)));
-    if (not *out or EVP_DecryptUpdate(ctx->decr, *out, &p_len, in, inlen) <= 0)
+    if (not *out or EVP_DecryptUpdate((EVP_CIPHER_CTX *)ctx->decr, *out, &p_len, in, inlen) <= 0)
     {
         return -1;
     }
 
-    if (EVP_DecryptFinal_ex(ctx->decr, *out + p_len, &f_len) <= 0)
+    if (EVP_DecryptFinal_ex((EVP_CIPHER_CTX *)ctx->decr, *out + p_len, &f_len) <= 0)
     {
         return -1;
     }
 
-    EVP_CIPHER_CTX_cleanup(ctx->decr);
+    EVP_CIPHER_CTX_cleanup((EVP_CIPHER_CTX *)ctx->decr);
 
     SIZE outlen = p_len + f_len;
     (*out)[outlen] = 0;

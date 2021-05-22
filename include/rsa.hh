@@ -4,7 +4,9 @@
 #include "types.hh"
 
 #include <string>
-#include <openssl/pem.h>
+// #include <openssl/pem.h>
+
+typedef int password_cb(char *buf, int size, int rw, void *userdata);
 
 enum KEY_TYPE
 {
@@ -14,7 +16,7 @@ enum KEY_TYPE
 
 RSA_CRYPTO RSA_CRYPTO_new();
 
-int RSA_init_key(std::string PEM, pem_password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx);
+int RSA_init_key(std::string PEM, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx);
 
 int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op);
 

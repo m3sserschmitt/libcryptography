@@ -1,7 +1,6 @@
 #include "sha.hh"
 
 #include <openssl/sha.h>
-#include <stdlib.h>
 #include <sstream>
 #include <iomanip>
 #include <string.h>

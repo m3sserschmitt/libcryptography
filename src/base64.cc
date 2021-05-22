@@ -1,5 +1,6 @@
 #include "base64.hh"
 
+#include <openssl/evp.h>
 #include <string.h>
 
 int base64_encode(BYTES in, SIZE inlen, BASE64 *out)

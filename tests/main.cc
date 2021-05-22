@@ -98,15 +98,18 @@ bool test_AES()
     return result;
 }
 
-bool test_RSA_sign()
+bool test_RSA()
 {
     RSA_CRYPTO ctx = RSA_CRYPTO_new();
 
     cout << "pubkey init: " << RSA_init_key(public_key_pem, 0, 0, PUBLIC_KEY, ctx) << "\n";
     cout << "privkey init: " << RSA_init_key(private_key_pem, 0, 0, PRIVATE_KEY, ctx) << "\n";
 
-    cout << "sign init ctx: " << RSA_init_ctx(ctx, SIGN) << "\n";
-    cout << "verify ctx init: " << RSA_init_ctx(ctx, VERIFY) << "\n";
+    cout << "sign ctx init: " << RSA_init_ctx(ctx, SIGN) << "\n";
+    cout << "verify init ctx: " << RSA_init_ctx(ctx, VERIFY) << "\n";
+
+    cout << "encrypt ctx init: " << RSA_init_ctx(ctx, ENCRYPT) << "\n";
+    cout << "decrypt ctx init: " << RSA_init_ctx(ctx, DECRYPT) << "\n";
 
     BYTES data = (BYTES) "text to be signed";
     SIZE datalen = strlen((PLAINTEXT)data);
@@ -126,7 +129,23 @@ bool test_RSA_sign()
 
     free(sign);
 
-    return signlen > 0 and auth and not auth2;
+    BYTES encr = 0;
+    int encrlen = RSA_encrypt(ctx, data, datalen, &encr);
+    
+    
+    
+    cout << "encrlen: " << encrlen << "\n";
+
+    BYTES decr = 0;
+    int decrlen = RSA_decrypt(ctx, encr, encrlen, &decr);
+
+    cout << "decrlen: " << decrlen << "\n";
+
+    cout << "decrypted text: " << decr << "\n";
+
+    bool encr_result = encrlen > 0 and decr > 0 and not strcmp((PLAINTEXT)decr, (PLAINTEXT)data);
+
+    return signlen > 0 and auth and not auth2 and encr_result;
 }
 
 int main()
@@ -143,7 +162,7 @@ int main()
     (result and cout << " (SUCCESS)\n") or cout << " (FAILURE)\n";
     cout << "\n";
 
-    result = test_RSA_sign();
+    result = test_RSA();
 
     cout << "RSA test: " << result;
     (result and cout << " (SUCCESS)\n") or cout << " (FAILURE)\n";
