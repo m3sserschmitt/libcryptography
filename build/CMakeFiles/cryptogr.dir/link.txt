@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -g -shared -Wl,-soname,libcryptogr.so -o libcryptogr.so CMakeFiles/cryptogr.dir/src/aes.cc.o CMakeFiles/cryptogr.dir/src/rsa.cc.o CMakeFiles/cryptogr.dir/src/base64.cc.o  -lcrypto 

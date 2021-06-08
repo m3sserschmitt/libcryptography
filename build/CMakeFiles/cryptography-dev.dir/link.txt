@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -g -shared -Wl,-soname,libcryptography-dev.so -o libcryptography-dev.so CMakeFiles/cryptography-dev.dir/src/aes.cc.o CMakeFiles/cryptography-dev.dir/src/rsa.cc.o CMakeFiles/cryptography-dev.dir/src/base64.cc.o  -lcrypto 
