@@ -29,23 +29,11 @@ Change the directory to newly downloaded source code:
 
 `cd /path/to/local/repository`
 
-Then
-
-`cd build`
-
-You are ready to build the library:
-
-`make`
-
-Last command will create the file `./build/libcryptography.so.*` which can be linked in other C/C++ projects.
+You can build the project using cmake.
 
 Also you can checkout `./tests/main.cc` file for some examples on basic encryption & decryption with AES or RSA, RSA signing & verification with RSA and base64 encoding & decoding.
 
-After you checked out encryption / decryption, you may want to install the library on your system. By default, headers will be located into `/usr/local/include/libcryptography` and library will be located into `/usr/local/lib` directory. Type:
-
-`
-sudo make install
-`
+You can install the library on your system using debian packages available into last release
 
 ## Authors
 
