@@ -48,9 +48,82 @@ static vector<string> split(string str, string sep, int max_split)
 	return tokens;
 }
 
+static size_t get_rsa_size(size_t inlen)
+{
+	size_t p = log(inlen) / log(2);
+
+	size_t m = pow(2, p);
+	size_t l = pow(2, p - 1);
+	size_t n = pow(2, p + 1);
+
+	if (m = inlen)
+	{
+		return inlen;
+	}
+	else if (m - l > n - m)
+	{
+		return n;
+	}
+	else
+	{
+		return l;
+	}
+}
+
 RSA_CRYPTO RSA_CRYPTO_new()
 {
 	return new _RSA_CRYPTO;
+}
+
+int RSA_generate_keys(string public_key, string private_key, SIZE bits, bool encrypt_key, BYTES passphrase, SIZE passlen, password_cb *cb)
+{
+	unsigned long e = RSA_F4;
+	BIGNUM *bignum = BN_new();
+
+	if (BN_set_word(bignum, e) != 1)
+	{
+		BN_free(bignum);
+
+		return -1;
+	}
+
+	RSA *r = RSA_new();
+	if (RSA_generate_key_ex(r, bits, bignum, 0) != 1)
+	{
+		BN_free(bignum);
+		RSA_free(r);
+
+		return -1;
+	}
+
+	BIO *pub = BIO_new_file(public_key.c_str(), "w+");
+	if (PEM_write_bio_RSA_PUBKEY(pub, r) != 1)
+	{
+		BN_free(bignum);
+		RSA_free(r);
+		BIO_free_all(pub);
+
+		return -1;
+	}
+
+	BIO *priv = BIO_new_file(private_key.c_str(), "w+");
+	const EVP_CIPHER *cipher = 0;
+
+	if(encrypt_key) {
+		cipher = EVP_aes_256_cbc();
+	}
+
+	if (PEM_write_bio_RSAPrivateKey(priv, r, cipher, passphrase, passlen, cb, 0) != 1)
+	{
+		BN_free(bignum);
+		RSA_free(r);
+		BIO_free_all(pub);
+		BIO_free_all(priv);
+
+		return -1;
+	}
+
+	return 0;
 }
 
 int RSA_init_key(string PEM, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx)
@@ -175,39 +248,6 @@ int RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)
 	EVP_MD_CTX_reset((EVP_MD_CTX *)ctx->sign);
 
 	return signlen;
-}
-
-static size_t get_rsa_size(size_t inlen)
-{
-	size_t p = log(inlen) / log(2);
-	
-	size_t m = pow(2, p);
-	size_t l = pow(2, p - 1);
-	size_t n = pow(2, p + 1);
-
-	if(m = inlen)
-	{
-		return inlen;
-	}
-	else if (m - l > n - m)
-	{
-		return n;
-	}
-	else
-	{
-		return l;
-	}
-	/*size_t delta = inlen % m;
-
-	if(not delta)
-	{
-		return inlen;
-	}
-
-    (delta < m / 2 and (inlen -= delta)) or (inlen += m - delta);
-
-		return inlen;
-	*/
 }
 
 int RSA_verify(RSA_CRYPTO ctx, BYTES sign, SIZE signlen, BYTES data, SIZE datalen, bool &auth)

@@ -29,10 +29,25 @@ RSA_CRYPTO RSA_CRYPTO_new();
 
 
 /**
+ * @brief 
+ * 
+ * @param public_key File for saving public key.
+ * @param private_key File for saving private key.
+ * @param bits Key length in bits
+ * @param encrypt_key Should be true if key encryption desired, otherwise false.
+ * @param passphrase Passphrase for private key encryption (if null, then private key will be saved unencrypted)
+ * @param passlen Passphrase length in bites.
+ * @param cb Callback function for reading password, if no passphrase provided
+ * @return int 
+ */
+int RSA_generate_keys(std::string public_key, std::string private_key, SIZE bits, bool encrypt_key, BYTES passphrase, SIZE passlen, password_cb *cb);
+
+
+/**
  * @brief Perform key initialization.
  * 
  * @param PEM Key in PEM format.
- * @param cb Password callback, if key is encrypted (if null, then default callback is used).
+ * @param cb Callback function for reading password, if key is encrypted (if null, then default callback is used).
  * @param passphrase It can be used as key decryption passphrase, or null if not passphrase not required
  * (if not null, then the callback provided in "cb" parameter is ignored).
  * @param ktype Key type: PUBLIC_KEY / PRIVATE_KEY
