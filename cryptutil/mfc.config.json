@@ -12,7 +12,7 @@
     "cryptography"
   ],
   "INCLUDE_PATHS": [
-      "/usr/local/include/libcryptography"
+      "../include"
   ],
   "EXTENSIONS": [
     "cc"

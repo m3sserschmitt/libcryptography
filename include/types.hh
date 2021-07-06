@@ -1,8 +1,19 @@
+/**
+ * @file types.hh
+ * @author Romulus-Emanuel Ruja
+ * @brief This file contain some type definitions.
+ * @version 0.1
+ * @date 2021-07-06
+ * 
+ * @copyright Copyright (c) 2021 MIT License.
+ * 
+ */
+
+
 #ifndef TYPES_HH
 #define TYPES_HH
 
 #include <cstddef>
-// #include <openssl/evp.h>
 
 enum CRYPTO_OP
 {
@@ -22,29 +33,15 @@ typedef char *PLAINTEXT;
 
 typedef PLAINTEXT BASE64;
 
-
-
-// typedef EVP_CIPHER_CTX *AES_CTX;
-
 typedef struct {
-    // BYTES passphrase;
-    // SIZE passlen;
     BYTES key;
     SIZE keylen;
     BYTES iv;
-    // SIZE ivlen;
     void *encr;
     void *decr;
 } _AES_CRYPTO;
 
 typedef _AES_CRYPTO *AES_CRYPTO; 
-
-
-// typedef EVP_PKEY *KEY;
-
-// typedef EVP_MD_CTX *SIGN_CTX;
-
-// typedef EVP_PKEY_CTX *PKEY_CTX;
 
 typedef struct {
     void *pubkey;
@@ -54,6 +51,12 @@ typedef struct {
     void *encr;
     void *decr;
 } _RSA_CRYPTO;
+
+enum KEY_TYPE
+{
+    PUBLIC_KEY = 0,
+    PRIVATE_KEY = 1
+};
 
 typedef _RSA_CRYPTO *RSA_CRYPTO;
 

@@ -3,8 +3,9 @@
 ../util/cmd.hh \
 ../util/help.hh \
 ../util/util.hh \
-../../../../../../usr/local/include/libcryptography/aes.hh \
-../../../../../../usr/local/include/libcryptography/base64.hh \
-../../../../../../usr/local/include/libcryptography/cryptography.hh \
-../../../../../../usr/local/include/libcryptography/rsa.hh \
-../../../../../../usr/local/include/libcryptography/types.hh
+../../include/aes.hh \
+../../include/base64.hh \
+../../include/cryptography.hh \
+../../include/rsa.hh \
+../../include/sha.hh \
+../../include/types.hh
