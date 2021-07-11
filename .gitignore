@@ -3,5 +3,4 @@
 *.so.*
 *.a
 deb
-build/src
 prepare-deb.sh
