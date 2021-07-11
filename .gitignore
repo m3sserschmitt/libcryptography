@@ -1,6 +1,6 @@
 .vscode
 *.o
 *.so.*
-.a
+*.a
 deb
 build/src
