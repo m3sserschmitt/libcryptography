@@ -1,6 +1,6 @@
 #include "util/cmd.hh"
 
-#include <cryptography.hh>
+#include <cryptography/cryptography.hh>
 
 typedef struct 
 {

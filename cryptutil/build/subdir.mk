@@ -6,7 +6,7 @@ CC_DEPS += ./deps/cryptex.d \
 
 ./%.o: ../%.cc
 	@echo 'Building file: $<'
-	$(CC) -c -Wall -I../../include $< -o $@
+	$(CC) -c -Wall $< -o $@
 	@echo 'Build finished: $<'
 	@echo
 

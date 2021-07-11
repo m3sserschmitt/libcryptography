@@ -2,10 +2,4 @@
 ../cryptex.hh \
 ../util/cmd.hh \
 ../util/help.hh \
-../util/util.hh \
-../../include/aes.hh \
-../../include/base64.hh \
-../../include/cryptography.hh \
-../../include/rsa.hh \
-../../include/sha.hh \
-../../include/types.hh
+../util/util.hh

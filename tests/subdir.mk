@@ -4,7 +4,7 @@ CC_DEPS += ./deps/main.d
 
 ./%.o: ./%.cc
 	@echo 'Building file: $<'
-	$(CC) -c -Wall -I../include $< -o $@
+	$(CC) -c -Wall $< -o $@
 	@echo 'Build finished: $<'
 	@echo
 

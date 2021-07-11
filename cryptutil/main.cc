@@ -2,8 +2,6 @@
 #include "util/util.hh"
 #include "util/help.hh"
 
-#include "cryptography.hh"
-
 #include <iostream>
 #include <unistd.h>
 

@@ -1,0 +1,36 @@
+{
+  "TARGET": "libcryptography.so.5.0.1",
+  "CC": "g++",
+  "LD": "ld",
+  "C_FLAGS": [
+    "-c",
+    "-Wall",
+    "-fPIC"
+  ],
+  "LD_FLAGS": [
+    "-shared",
+    "-soname libcryptography.so.5"
+  ],
+  "LIBS": [
+    "crypto"
+  ],
+  "INCLUDE_PATHS": [
+    "include"
+  ],
+  "EXTENSIONS": [
+    "cc"
+  ],
+  "IGNORE_PATHS": [
+    ".vscode",
+    "cryptutil",
+    "deb",
+    "tests"
+  ],
+  "CUSTOM_TARGETS": {
+    "static": "ar -rvs libcryptography.a $(OBJECTS)"
+  },
+  "VERBOSE": false,
+  "RM": "rm -v",
+  "BUILD_DIRECTORY": "./build",
+  "BIN_DIRECTORY": "./build"
+}

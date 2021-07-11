@@ -7,11 +7,11 @@
     "-Wall"
   ],
   "LD_FLAGS": [
-      "../build/libcryptography.so.*"
   ],
-  "LIBS": [],
+  "LIBS": [
+    "cryptography"
+  ],
   "INCLUDE_PATHS": [
-      "../include"
   ],
   "EXTENSIONS": [
     "cc"

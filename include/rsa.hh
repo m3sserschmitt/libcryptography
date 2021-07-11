@@ -17,6 +17,16 @@
 
 #include <string>
 
+
+/**
+ * @brief Password Callback.
+ * 
+ * @param buf Buffer to write the passphrase to.
+ * @param size Size of buff (i.e password length).
+ * @param rw A typical routine will ask the user to verify the passphrase (for example by prompting for it twice) if rw is 1.
+ * @param userdata It allows arbitrary data to be passed to the callback by the application.
+ * @return int The callback MUST return the number of characters in the passphrase or -1 if an error occurred.
+ */
 typedef int password_cb(char *buf, int size, int rw, void *userdata);
 
 
@@ -36,25 +46,62 @@ RSA_CRYPTO RSA_CRYPTO_new();
  * @param bits Key length in bits
  * @param encrypt_key Should be true if key encryption desired, otherwise false.
  * @param passphrase Passphrase for private key encryption (if null, then private key will be saved unencrypted)
- * @param passlen Passphrase length in bites.
- * @param cb Callback function for reading password, if no passphrase provided
- * @return int 
+ * @param passlen Passphrase length in bytes.
+ * @param cb Callback function used to read encryption passphrase. If null, then default callback is used. This callback is
+ * used only when key encryption desired and passphrase parameter is null.
+ * @return int 0 if success, -1 if failure.
  */
 int RSA_generate_keys(std::string public_key, std::string private_key, SIZE bits, bool encrypt_key, BYTES passphrase, SIZE passlen, password_cb *cb);
+
+
+/**
+ * @brief Same as RSA_generate_keys function.
+ * 
+ */
+#define RSA_gen_keys(public_pem_file, private_pem_file, bits, encrypt_key, passphrase, passlen) RSA_generate_keys(public_pem_file, private_pem_file, bits, encrypt_key, passphrase, passlen, 0)
 
 
 /**
  * @brief Perform key initialization.
  * 
  * @param PEM Key in PEM format.
- * @param cb Callback function for reading password, if key is encrypted (if null, then default callback is used).
- * @param passphrase It can be used as key decryption passphrase, or null if not passphrase not required
- * (if not null, then the callback provided in "cb" parameter is ignored).
+ * @param cb Callback function used to read decryption passphrase, if key is encrypted. If null, then default callback is used.
+ * This callback is used only when key is encrypted and passphrase parameter is null.
+ * @param passphrase It can be used as key decryption passphrase, or null if passphrase not required
+ * If not null, then the callback provided in cb parameter is ignored.
  * @param ktype Key type: PUBLIC_KEY / PRIVATE_KEY
  * @param ctx Should be created with RSA_CRYPTO_new function.
  * @return int 0 for success, -1 for failure.
  */
 int RSA_init_key(std::string PEM, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx);
+
+
+/**
+ * @brief Same as RSA_init_key function.
+ * 
+ */
+#define RSA_key_init(PEM_file, passphrase, key_type, ctx) RSA_init_key(PEM_file, 0, passphrase, key_type, ctx)
+
+
+/**
+ * @brief Initialize RSA key from PEM file.
+ * 
+ * @param filename File path containing key in PEM format.
+ * @param cb Password callback used to read decryption passphrase, if key is encrypted. If null, then default callback is used.
+ * If passphrase parameter is not null, then cb is ignored.
+ * @param passphrase Passphrase for key decryption, if required, otherwise null.
+ * @param ktype Type of key: PUBLIC_KEY / PRIVATE_KEY.
+ * @param ctx RSA context to be initialized (must be returned by RSA_CRYPTO_new function).
+ * @return int 0 if success, -1 if failure.
+ */
+int RSA_init_key_file(std::string filename, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx);
+
+
+/**
+ * @brief Same as RSA_init_key_file function.
+ * 
+ */
+#define RSA_key_file_init(filename, passphrase, key_type, ctx) RSA_init_key_file(filename, 0, passphrase, key_type, ctx)
 
 
 /**
@@ -122,7 +169,7 @@ int RSA_encrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out);
  * @param ctx RSA context initialized accordingly.
  * @param in Data to be decrypted.
  * @param inlen Size of data to be decrypted in bytes.
- * @param out Decrypted data.
+ * @param out Decrypted data (if null, then is dynamically allocated).
  * @return int Size of decrypted data if success, -1 otherwise.
  */
 int RSA_decrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out);

@@ -29,11 +29,21 @@ Change the directory to newly downloaded source code:
 
 `cd /path/to/local/repository`
 
-You can build the project using cmake.
+Change directory to build.
 
-Also you can checkout `./tests/main.cc` file for some examples on basic encryption & decryption with AES or RSA, RSA signing & verification with RSA and base64 encoding & decoding.
+`cd build`.
 
-You can install the library on your system using debian packages available into last release
+Now library can be compiled using `make`:
+
+`make`
+
+and if you want to build the static version of library too:
+
+`make static`
+
+Also you can checkout `./tests/main.cc` file for some examples on basic encryption & decryption with AES or RSA, RSA signing & verification and base64 encoding & decoding. You need to install the library on you system in order to compile this.
+
+You can install the library on your system using debian packages available into last release.
 
 ## Authors
 
@@ -45,9 +55,13 @@ This project is licensed under the MIT License. Feel free to copy, modify and di
 
 ## Disclaimer
 
-This code is just a **proof of concept** of using `OpenSSL` for basic cryptography. Use it on your own risk.
+This code is just a **proof of concept** of using `OpenSSL` for basic cryptography.
 
 ## Changelog
+* **_New in version v5.0.1 (July 2021):_**
+    * Added function for RSA keys generation.
+    * Added function for RSA keys initialization from PEM files.
+    * Added documentation into source code.
 
 * **_New in version v5.0.0 (March 2021):_**
     * All code was rewritten.

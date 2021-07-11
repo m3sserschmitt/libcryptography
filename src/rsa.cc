@@ -3,9 +3,13 @@
 
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+
+#include <fstream>
 #include <math.h>
 #include <string>
 #include <vector>
+#include <sys/stat.h>
+#include <string.h>
 
 using namespace std;
 
@@ -56,7 +60,7 @@ static size_t get_rsa_size(size_t inlen)
 	size_t l = pow(2, p - 1);
 	size_t n = pow(2, p + 1);
 
-	if (m = inlen)
+	if (m == inlen)
 	{
 		return inlen;
 	}
@@ -109,7 +113,8 @@ int RSA_generate_keys(string public_key, string private_key, SIZE bits, bool enc
 	BIO *priv = BIO_new_file(private_key.c_str(), "w+");
 	const EVP_CIPHER *cipher = 0;
 
-	if(encrypt_key) {
+	if (encrypt_key)
+	{
 		cipher = EVP_aes_256_cbc();
 	}
 
@@ -122,6 +127,11 @@ int RSA_generate_keys(string public_key, string private_key, SIZE bits, bool enc
 
 		return -1;
 	}
+
+	BN_free(bignum);
+	RSA_free(r);
+	BIO_free_all(pub);
+	BIO_free_all(priv);
 
 	return 0;
 }
@@ -151,6 +161,43 @@ int RSA_init_key(string PEM, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, 
 
 	*key = EVP_PKEY_new();
 	EVP_PKEY_assign_RSA(*key, rsa);
+
+	return 0;
+}
+
+int RSA_init_key_file(std::string filename, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx)
+{
+	FILE *file = fopen(filename.c_str(), "rb");
+
+	if (not file)
+	{
+		return -1;
+	}
+
+	RSA *rsa = 0;
+
+	if (ktype == PRIVATE_KEY)
+	{
+		if (not(rsa = PEM_read_RSAPrivateKey(file, &rsa, cb, passphrase)))
+		{
+			return -1;
+		}
+
+		ctx->privkey = EVP_PKEY_new();
+		EVP_PKEY_assign_RSA((EVP_PKEY *)ctx->privkey, rsa);
+	}
+	else if (ktype == PUBLIC_KEY)
+	{
+		if (not(rsa = PEM_read_RSA_PUBKEY(file, &rsa, cb, passphrase)))
+		{
+			return -1;
+		}
+
+		ctx->pubkey = EVP_PKEY_new();
+		EVP_PKEY_assign_RSA((EVP_PKEY *)ctx->pubkey, rsa);
+	}
+
+	fclose(file);
 
 	return 0;
 }

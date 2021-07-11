@@ -12,7 +12,6 @@
     "cryptography"
   ],
   "INCLUDE_PATHS": [
-      "../include"
   ],
   "EXTENSIONS": [
     "cc"

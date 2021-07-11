@@ -2,7 +2,7 @@ CC :=g++
 LD :=g++
 TARGET :=tests
 OUT :=./tests
-LIBS :=
+LIBS :=-lcryptography
 CC_DEPS :=
 OBJECTS :=
 RM :=rm -v
@@ -15,7 +15,7 @@ all: $(OUT)
 $(OUT): $(OBJECTS)
 	@echo Building target: "$@".
 	@echo Invoking $(LD) Linker ...
-	$(LD) $(OBJECTS) $(LIBS) ../build/libcryptography.so.* -o $(OUT)
+	$(LD) $(OBJECTS) $(LIBS)  -o $(OUT)
 	@echo Target $(TARGET) build successfully.
 	@echo Done.
 

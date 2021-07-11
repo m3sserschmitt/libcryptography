@@ -43,8 +43,9 @@ int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP o
  * 
  * @param passphrase Passphrase to be used for encryption.
  * @param passlen Length of passphrase in bytes.
- * @param salt Salt to be used (or null in not desired).
- * @param rounds Number of encryption rounds.
+ * @param salt Salt to be used. It should point to an 8 byte buffer or NULL if no salt is used.
+ * @param rounds Number of iteration count to use. Increasing the count parameter slows down the 
+ * algorithm which makes it harder for an attacker to perform a brute force attack using a large number of candidate passwords.
  * @param ctx AES context to be initialized.
  * @return int 0 for success, -1 for failure.
  */
