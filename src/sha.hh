@@ -12,6 +12,7 @@
 
 #include "types.hh"
 
+int digest(BYTES in, SIZE inlen, const CHAR *digest_name, BYTES *out);
 
 /**
  * @brief Perform SHA256 hashing.

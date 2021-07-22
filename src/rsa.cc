@@ -13,44 +13,14 @@
 
 using namespace std;
 
-static vector<string> split(string str, string sep, int max_split)
-{
-	vector<string> tokens;
-
-	size_t sep_pos;
-	int split_index = 0;
-
-	if (!str.size())
-		return tokens;
-
-	tokens.reserve(10);
-
-	do
-	{
-		split_index++;
-		sep_pos = str.find(sep);
-
-		// tokens.resize(tokens.size() + 1);
-		tokens.push_back(str.substr(0, sep_pos));
-		if (sep_pos == string::npos)
-		{
-			// tokens.resize(split_index);
-			return tokens;
-		}
-
-		str = str.substr(sep_pos + sep.size());
-		if (split_index == max_split && str.size())
-		{
-
-			// tokens.resize(tokens.size() + 1);
-			tokens.push_back(str);
-			// tokens.resize(split_index + 1);
-			return tokens;
-		}
-	} while (true);
-
-	return tokens;
-}
+struct _RSA_CRYPTO {
+    EVP_PKEY *pubkey;
+    EVP_PKEY *privkey;
+    EVP_MD_CTX *sign;
+    EVP_MD_CTX *verif;
+    EVP_PKEY_CTX *encr;
+    EVP_PKEY_CTX *decr;
+};
 
 static size_t get_rsa_size(size_t inlen)
 {
@@ -76,7 +46,16 @@ static size_t get_rsa_size(size_t inlen)
 
 RSA_CRYPTO RSA_CRYPTO_new()
 {
-	return new _RSA_CRYPTO;
+	_RSA_CRYPTO *ctx = new _RSA_CRYPTO;
+
+	ctx->pubkey = 0;
+    ctx->privkey = 0;
+    ctx->sign = 0;
+    ctx->verif = 0;
+    ctx->encr = 0;
+    ctx->decr = 0;
+
+	return ctx;
 }
 
 int RSA_generate_keys(string public_key, string private_key, SIZE bits, bool encrypt_key, BYTES passphrase, SIZE passlen, password_cb *cb)
@@ -151,8 +130,8 @@ int RSA_init_key(string PEM, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, 
 		return -1;
 	}
 
-	ktype == PRIVATE_KEY and (pem_read_key = PEM_read_bio_RSAPrivateKey) and (key = (EVP_PKEY **)&ctx->privkey);
-	ktype == PUBLIC_KEY and (pem_read_key = PEM_read_bio_RSA_PUBKEY) and (key = (EVP_PKEY **)&ctx->pubkey);
+	ktype == PRIVATE_KEY and (pem_read_key = PEM_read_bio_RSAPrivateKey) and (key = &ctx->privkey);
+	ktype == PUBLIC_KEY and (pem_read_key = PEM_read_bio_RSA_PUBKEY) and (key = &ctx->pubkey);
 
 	if (not(rsa = pem_read_key(keybio, &rsa, cb, passphrase)))
 	{
@@ -184,7 +163,7 @@ int RSA_init_key_file(std::string filename, password_cb *cb, BYTES passphrase, K
 		}
 
 		ctx->privkey = EVP_PKEY_new();
-		EVP_PKEY_assign_RSA((EVP_PKEY *)ctx->privkey, rsa);
+		EVP_PKEY_assign_RSA(ctx->privkey, rsa);
 	}
 	else if (ktype == PUBLIC_KEY)
 	{
@@ -194,12 +173,22 @@ int RSA_init_key_file(std::string filename, password_cb *cb, BYTES passphrase, K
 		}
 
 		ctx->pubkey = EVP_PKEY_new();
-		EVP_PKEY_assign_RSA((EVP_PKEY *)ctx->pubkey, rsa);
+		EVP_PKEY_assign_RSA(ctx->pubkey, rsa);
 	}
 
 	fclose(file);
 
 	return 0;
+}
+
+int PEM_key_to_DER(RSA_CRYPTO ctx, BYTES *der)
+{
+	if (not ctx or not ctx->pubkey)
+	{
+		return -1;
+	}
+
+	return i2d_PUBKEY(ctx->pubkey, der);
 }
 
 int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
@@ -208,8 +197,8 @@ int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 	{
 		EVP_MD_CTX **op_ctx = 0;
 
-		op == SIGN and (op_ctx = (EVP_MD_CTX **)&ctx->sign);
-		op == VERIFY and (op_ctx = (EVP_MD_CTX **)&ctx->verif);
+		op == SIGN and (op_ctx = &ctx->sign);
+		op == VERIFY and (op_ctx = &ctx->verif);
 
 		if (not(*op_ctx = EVP_MD_CTX_create()))
 		{
@@ -225,15 +214,15 @@ int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 
 		if (op == ENCRYPT)
 		{
-			ctx->encr = EVP_PKEY_CTX_new((EVP_PKEY *)ctx->pubkey, 0);
+			ctx->encr = EVP_PKEY_CTX_new(ctx->pubkey, 0);
 			crypto_init = EVP_PKEY_encrypt_init;
-			op_ctx = (EVP_PKEY_CTX **)&ctx->encr;
+			op_ctx = &ctx->encr;
 		}
 		else
 		{
-			ctx->decr = EVP_PKEY_CTX_new((EVP_PKEY *)ctx->privkey, 0);
+			ctx->decr = EVP_PKEY_CTX_new(ctx->privkey, 0);
 			crypto_init = EVP_PKEY_decrypt_init;
-			op_ctx = (EVP_PKEY_CTX **)&ctx->decr;
+			op_ctx = &ctx->decr;
 		}
 
 		if (not op_ctx)
@@ -250,49 +239,33 @@ int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 	return 0;
 }
 
-int PEM_key_to_DER(string PEM, BYTES *out)
-{
-	vector<string> tokens = split(PEM, "\n", -1);
-	vector<string>::iterator it = tokens.begin() + 1;
-	vector<string>::iterator it_end = tokens.end() - 1;
-
-	string base64_key;
-
-	for (; it != it_end; it++)
-	{
-		base64_key += *it;
-	}
-
-	return base64_decode((BASE64)base64_key.data(), out);
-}
-
 int RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)
 {
 	SIZE signlen;
 
-	if (EVP_DigestSignInit((EVP_MD_CTX *)ctx->sign, 0, EVP_sha256(), 0, (EVP_PKEY *)ctx->privkey) <= 0)
+	if (EVP_DigestSignInit(ctx->sign, 0, EVP_sha256(), 0, (EVP_PKEY *)ctx->privkey) <= 0)
 	{
 		return -1;
 	}
 
-	if (EVP_DigestSignUpdate((EVP_MD_CTX *)ctx->sign, in, inlen) <= 0)
+	if (EVP_DigestSignUpdate(ctx->sign, in, inlen) <= 0)
 	{
 		return -1;
 	}
 
-	if (EVP_DigestSignFinal((EVP_MD_CTX *)ctx->sign, 0, &signlen) <= 0)
+	if (EVP_DigestSignFinal(ctx->sign, 0, &signlen) <= 0)
 	{
 		return -1;
 	}
 
-	*sign or (*sign = (BYTES)calloc(signlen + 1, sizeof(BYTE)));
+	*sign or (*sign = new BYTE[signlen + 1]);
 
-	if (not *sign or EVP_DigestSignFinal((EVP_MD_CTX *)ctx->sign, *sign, &signlen) <= 0)
+	if (not *sign or EVP_DigestSignFinal(ctx->sign, *sign, &signlen) <= 0)
 	{
 		return -1;
 	}
 
-	EVP_MD_CTX_reset((EVP_MD_CTX *)ctx->sign);
+	EVP_MD_CTX_reset(ctx->sign);
 
 	return signlen;
 }
@@ -337,14 +310,14 @@ int RSA_encrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 {
 	SIZE outlen;
 
-	if (EVP_PKEY_encrypt((EVP_PKEY_CTX *)ctx->encr, 0, &outlen, in, inlen) <= 0)
+	if (EVP_PKEY_encrypt(ctx->encr, 0, &outlen, in, inlen) <= 0)
 	{
 		return -1;
 	}
 
-	*out or (*out = (BYTES)calloc(outlen + 1, sizeof(BYTE)));
+	*out or (*out = new BYTE[outlen + 1]);
 
-	if (EVP_PKEY_encrypt((EVP_PKEY_CTX *)ctx->encr, *out, &outlen, in, inlen) <= 0)
+	if (EVP_PKEY_encrypt(ctx->encr, *out, &outlen, in, inlen) <= 0)
 	{
 		return -1;
 	}
@@ -357,14 +330,14 @@ int RSA_decrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 	inlen = get_rsa_size(inlen);
 	SIZE outlen;
 
-	if (EVP_PKEY_decrypt((EVP_PKEY_CTX *)ctx->decr, 0, &outlen, in, inlen) <= 0)
+	if (EVP_PKEY_decrypt(ctx->decr, 0, &outlen, in, inlen) <= 0)
 	{
 		return -1;
 	}
 
-	*out or (*out = (BYTES)calloc(outlen + 1, sizeof(BYTE)));
+	*out or (*out = new BYTE[outlen + 1]);
 
-	if (EVP_PKEY_decrypt((EVP_PKEY_CTX *)ctx->decr, *out, &outlen, in, inlen) <= 0)
+	if (EVP_PKEY_decrypt(ctx->decr, *out, &outlen, in, inlen) <= 0)
 	{
 		return -1;
 	}

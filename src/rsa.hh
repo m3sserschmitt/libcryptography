@@ -122,7 +122,7 @@ int RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op);
  * @param der DER data (if null, then is is dynamically allocated).
  * @return int Size of DER data if success, -1 otherwise.
  */
-int PEM_key_to_DER(std::string PEM, BYTES *der);
+int PEM_key_to_DER(RSA_CRYPTO ctx, BYTES *der);
 
 
 /**

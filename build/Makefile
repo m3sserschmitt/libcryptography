@@ -1,7 +1,7 @@
 CC :=g++
 LD :=ld
-TARGET :=libcryptography.so.5.0.1
-OUT :=./libcryptography.so.5.0.1
+TARGET :=libcryptography.so.5.0.2
+OUT :=./libcryptography.so.5.0.2
 LIBS :=-lcrypto
 CC_DEPS :=
 OBJECTS :=
@@ -20,7 +20,7 @@ $(OUT): $(OBJECTS)
 	@echo Done.
 
 clean:
-	$(RM) $(OBJECTS) ./libcryptography.so.5.0.1
+	$(RM) $(OBJECTS) ./libcryptography.so.5.0.2
 
 static:
 	ar -rvs libcryptography.a $(OBJECTS)

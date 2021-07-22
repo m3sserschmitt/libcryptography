@@ -4,7 +4,9 @@
   "LD": "g++",
   "C_FLAGS": [
     "-c",
-    "-Wall"
+    "-Wall",
+    "-g",
+    "-O0"
   ],
   "LD_FLAGS": [
   ],

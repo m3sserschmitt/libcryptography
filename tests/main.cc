@@ -1,6 +1,8 @@
 #include <cryptography/aes.hh>
 #include <cryptography/base64.hh>
 #include <cryptography/rsa.hh>
+#include <cryptography/sha.hh>
+#include <cryptography/random.hh>
 
 #include <fstream>
 #include <iostream>
@@ -8,6 +10,22 @@
 
 using namespace std;
 
+static BYTES read_file(string filename, const char *open_mode)
+{
+    FILE *file = fopen(filename.c_str(), open_mode);
+
+    fseek(file, 0, SEEK_END);
+    long filesize = ftell(file);    
+    fseek(file, 0, SEEK_SET);
+
+    BYTES data = new BYTE[filesize + 1];
+
+    fread(data, sizeof(BYTE), filesize, file);
+
+    fclose(file);
+
+    return data;
+}
 
 /**
  * @brief Basic example for base64 encoding / decoding.
@@ -148,7 +166,7 @@ bool test_RSA()
 }
 
 int main()
-{    
+{
     bool result = test_base64();
 
     cout << "base64 test: " << result;

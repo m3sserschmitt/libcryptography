@@ -1,32 +1,63 @@
 #include "sha.hh"
 
 #include <openssl/sha.h>
+#include <openssl/evp.h>
 #include <sstream>
 #include <iomanip>
 #include <string.h>
 
 using namespace std;
 
+int digest(BYTES in, SIZE inlen, const CHAR *digest_name, BYTES *out)
+{
+    const EVP_MD *md = EVP_get_digestbyname(digest_name);
+
+    if (not md)
+    {
+        return -1;
+    }
+
+    EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+    
+    if (not ctx)
+    {
+        EVP_MD_CTX_free(ctx);
+
+        return -1;
+    }
+
+    if (not EVP_DigestInit_ex(ctx, md, 0))
+    {
+        EVP_MD_CTX_free(ctx);
+
+        return -1;
+    }
+
+    if (not EVP_DigestUpdate(ctx, in, inlen))
+    {
+        EVP_MD_CTX_free(ctx);
+
+        return -1;
+    }
+
+    *out or (*out = new BYTE[EVP_MAX_MD_SIZE + 1]);
+
+    unsigned int outlen;
+    if (not *out or not EVP_DigestFinal_ex(ctx, *out, &outlen))
+    {
+        EVP_MD_CTX_free(ctx);
+
+        return -1;
+    }
+
+    EVP_MD_CTX_free(ctx);
+
+    return outlen;
+}
+
 int sha256(BYTES in, SIZE inlen, BYTES *out)
 {
-    SHA256_CTX *ctx = new SHA256_CTX;
-    *out or (*out = (BYTES)calloc(SHA256_DIGEST_LENGTH, sizeof(BYTE)));
-
-    if (not SHA256_Init(ctx))
-    {
-        return -1;
-    }
-
-    if (not SHA256_Update(ctx, in, inlen))
-    {
-        return -1;
-    }
-
-    int result = SHA256_Final(*out, ctx);
-
-    delete ctx;
-
-    return not result ? -1 : SHA256_DIGEST_LENGTH;
+    return digest(in, inlen, "sha256", out);
 }
 
 int sha256(BYTES in, SIZE inlen, PLAINTEXT *out)
@@ -45,8 +76,9 @@ int sha256(BYTES in, SIZE inlen, PLAINTEXT *out)
         ss << hex << setw(2) << setfill('0') << (int)hash[i];
     }
 
-    free(hash);
-    *out or (*out = (PLAINTEXT)calloc(outlen + 1, sizeof(char)));
+    delete hash;
+
+    *out or (*out = new CHAR[outlen + 1]);
     strcpy(*out, ss.str().data());
 
     return outlen;

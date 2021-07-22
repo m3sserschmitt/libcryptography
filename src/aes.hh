@@ -9,12 +9,10 @@
  * 
  */
 
-
 #ifndef AES_HH
 #define AES_HH
 
 #include "types.hh"
-
 
 /**
  * @brief Create new AES encryption / decryption context.
@@ -23,6 +21,41 @@
  */
 AES_CRYPTO AES_CRYPTO_new();
 
+/**
+ * @brief Setup key to be used for AES encryption / decryption.
+ * 
+ * @param key Key to be used.
+ * @param keylen Length of key in bytes.
+ * @param ctx AES context to setup encryption key.
+ * @return int 0 if success, -1 if failure.
+ */
+int AES_setup_key(BYTES key, SIZE keylen, AES_CRYPTO ctx);
+
+/**
+ * @brief Setup initialization vector to be used for encryption / decryption.
+ * 
+ * @param iv Initialization vector (tipically a 16 bytes random vector).
+ * @param ivlen Size of iv in bytes.
+ * @param ctx AES context to setup iv vector.
+ * @return int 0 if success, -1 if failure.
+ */
+int AES_setup_iv(BYTES iv, SIZE ivlen, AES_CRYPTO ctx);
+
+/**
+ * @brief Return current encryption key from AES context.
+ * 
+ * @param ctx Context to retrieve key from.
+ * @return SIZE return length of key in bytes.
+ */
+int AES_get_key(AES_CRYPTO ctx, BYTES *key);
+
+/**
+ * @brief Get initialization vector from AES context.
+ * 
+ * @param ctx Context to retrieve iv from.
+ * @return SIZE Size of iv in bytes or -1 if no iv is used within this context.
+ */
+int AES_get_iv(AES_CRYPTO ctx, BYTES *iv);
 
 /**
  * @brief Initialize AES contex for specified operation.
@@ -37,7 +70,6 @@ AES_CRYPTO AES_CRYPTO_new();
  */
 int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx);
 
-
 /**
  * @brief Initialize AES context for both encryption and decryption.
  * 
@@ -51,7 +83,6 @@ int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP o
  */
 int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, AES_CRYPTO ctx);
 
-
 /**
  * @brief Perform AES encryption.
  * 
@@ -62,7 +93,6 @@ int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, AES_CRYPTO 
  * @return int Size of encrypted data if success, -1 if failure.
  */
 int AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out);
-
 
 /**
  * @brief Perform AES decryption.

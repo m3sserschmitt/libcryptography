@@ -1,4 +1,4 @@
 ./src/rsa.o: ../src/rsa.cc \
-../include/base64.hh \
-../include/rsa.hh \
-../include/types.hh
+../src/base64.hh \
+../src/rsa.hh \
+../src/types.hh

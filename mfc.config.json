@@ -1,11 +1,13 @@
 {
-  "TARGET": "libcryptography.so.5.0.1",
+  "TARGET": "libcryptography.so.5.0.2",
   "CC": "g++",
   "LD": "ld",
   "C_FLAGS": [
     "-c",
     "-Wall",
-    "-fPIC"
+    "-fPIC",
+    "-g",
+    "-O0"
   ],
   "LD_FLAGS": [
     "-shared",
@@ -15,7 +17,6 @@
     "crypto"
   ],
   "INCLUDE_PATHS": [
-    "include"
   ],
   "EXTENSIONS": [
     "cc"

@@ -29,28 +29,15 @@ typedef unsigned char BYTE;
 
 typedef BYTE *BYTES;
 
-typedef char *PLAINTEXT;
+typedef char CHAR;
+
+typedef CHAR *PLAINTEXT;
 
 typedef PLAINTEXT BASE64;
 
-typedef struct {
-    BYTES key;
-    SIZE keylen;
-    BYTES iv;
-    void *encr;
-    void *decr;
-} _AES_CRYPTO;
+struct _AES_CRYPTO;
 
 typedef _AES_CRYPTO *AES_CRYPTO; 
-
-typedef struct {
-    void *pubkey;
-    void *privkey;
-    void *sign;
-    void *verif;
-    void *encr;
-    void *decr;
-} _RSA_CRYPTO;
 
 enum KEY_TYPE
 {
@@ -58,6 +45,7 @@ enum KEY_TYPE
     PRIVATE_KEY = 1
 };
 
+struct _RSA_CRYPTO;
 typedef _RSA_CRYPTO *RSA_CRYPTO;
 
 #endif
