@@ -58,6 +58,10 @@ This project is licensed under the MIT License. Feel free to copy, modify and di
 This code is just a **proof of concept** of using `OpenSSL` for basic cryptography.
 
 ## Changelog
+* **_New in version v6.0.0 (August 2021):_**
+    * Library reorganized into CRYPTO namespace.
+    * No backward compatible.
+    
 * **_New in version v5.0.1 (July 2021):_**
     * Added function for RSA keys generation.
     * Added function for RSA keys initialization from PEM files.

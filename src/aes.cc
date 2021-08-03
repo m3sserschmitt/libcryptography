@@ -19,7 +19,7 @@ static inline SIZE AES_get_encrypted_size(SIZE inlen)
     return inlen + AES_BLOCK_SIZE;
 }
 
-AES_CRYPTO AES_CRYPTO_new()
+AES_CRYPTO CRYPTO::AES_CRYPTO_new()
 {
     _AES_CRYPTO *ctx = new _AES_CRYPTO;
 
@@ -33,19 +33,9 @@ AES_CRYPTO AES_CRYPTO_new()
     return ctx;
 }
 
-int AES_setup_key(BYTES key, AES_CRYPTO ctx)
+int CRYPTO::AES_setup_key(const BYTES key, SIZE keylen, AES_CRYPTO ctx)
 {
     if (not ctx)
-    {
-        return -1;
-    }
-
-    SIZE keylen = 0;
-
-    ctx->encr and (keylen = EVP_CIPHER_CTX_key_length(ctx->encr));
-    ctx->decr and (keylen = EVP_CIPHER_CTX_key_length(ctx->decr));
-
-    if (not keylen)
     {
         return -1;
     }
@@ -57,25 +47,15 @@ int AES_setup_key(BYTES key, AES_CRYPTO ctx)
         return -1;
     }
 
-    memset(ctx->key, 0, keylen + 1);
     memcpy(ctx->key, key, keylen);
+    ctx->key[keylen] = 0;
 
     return 0;
 }
 
-int AES_setup_iv(BYTES iv, AES_CRYPTO ctx)
+int CRYPTO::AES_setup_iv(const BYTES iv, SIZE ivlen, AES_CRYPTO ctx)
 {
     if (not ctx)
-    {
-        return -1;
-    }
-
-    SIZE ivlen = 0;
-
-    ctx->encr and (ivlen = EVP_CIPHER_CTX_iv_length(ctx->encr));
-    ctx->decr and (ivlen = EVP_CIPHER_CTX_iv_length(ctx->decr));
-
-    if (not ivlen)
     {
         return -1;
     }
@@ -87,20 +67,15 @@ int AES_setup_iv(BYTES iv, AES_CRYPTO ctx)
         return -1;
     }
 
-    memset(ctx->iv, 0, ivlen + 1);
     memcpy(ctx->iv, iv, ivlen);
+    ctx->iv[ivlen] = 0;
 
     return 0;
 }
 
-int AES_get_key(AES_CRYPTO ctx, BYTES *key)
+int CRYPTO::AES_read_key(const AES_CRYPTO ctx, SIZE keylen, BYTES *key)
 {
-    SIZE keylen = 0;
-
-    ctx->encr and (keylen = EVP_CIPHER_CTX_key_length(ctx->encr));
-    ctx->decr and (keylen = EVP_CIPHER_CTX_key_length(ctx->decr));
-
-    if (not keylen)
+    if (not ctx or not ctx->key)
     {
         return -1;
     }
@@ -112,20 +87,15 @@ int AES_get_key(AES_CRYPTO ctx, BYTES *key)
         return -1;
     }
 
-    memset(key, 0, keylen + 1);
     memcpy(*key, ctx->key, keylen);
+    (*key)[keylen] = 0;
 
-    return keylen;
+    return 0;
 }
 
-int AES_get_iv(AES_CRYPTO ctx, BYTES *iv)
+int CRYPTO::AES_read_iv(const AES_CRYPTO ctx, SIZE ivlen, BYTES *iv)
 {
-    SIZE ivlen = 0;
-
-    ctx->encr and (ivlen = EVP_CIPHER_CTX_iv_length(ctx->encr));
-    ctx->decr and (ivlen = EVP_CIPHER_CTX_iv_length(ctx->decr));
-
-    if (not ivlen)
+    if (not ctx or not ctx->iv)
     {
         return -1;
     }
@@ -137,15 +107,20 @@ int AES_get_iv(AES_CRYPTO ctx, BYTES *iv)
         return -1;
     }
 
-    memset(iv, 0, ivlen + 1);
     memcpy(*iv, ctx->iv, ivlen);
+    (*iv)[ivlen] = 0;
 
-    return ivlen;
+    return 0;
 }
 
-int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx)
+int CRYPTO::AES_init(const BYTES passphrase, SIZE passlen, const BYTES salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx)
 {
-    if (passphrase and passlen and ctx)
+    if (not ctx)
+    {
+        return -1;
+    }
+
+    if (passphrase and passlen /*and (not ctx->key or not ctx->key)*/)
     {
         ctx->key or (ctx->key = new BYTE[32 + 1]);
         ctx->iv or (ctx->iv = new BYTE[16 + 1]);
@@ -181,20 +156,41 @@ int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP o
             return -1;
         }
 
-        op == ENCRYPT and (ctx->encrinit = 1);
-        op == DECRYPT and (ctx->decrinit = 1);
+        op == ENCRYPT and (ctx->encrinit = 1) and ctx->key and ctx->iv and EVP_EncryptInit_ex(ctx->encr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv);
+        op == DECRYPT and (ctx->decrinit = 1) and ctx->key and ctx->iv and EVP_DecryptInit_ex(ctx->decr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv);
     }
 
     return 0;
 }
 
-int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, AES_CRYPTO ctx)
+int CRYPTO::AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, AES_CRYPTO ctx)
 {
-    return AES_init(passphrase, passlen, salt, rounds, ENCRYPT, ctx) == 0 and AES_init(passphrase, passlen, salt, rounds, DECRYPT, ctx) == 0 ? 0 : -1;
+    return AES_init(passphrase, passlen, salt, rounds, ENCRYPT, ctx) == 0 and AES_init(0, 0, 0, 0, DECRYPT, ctx) == 0 ? 0 : -1;
 }
 
-int AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::AES_ctx_dup(AES_CRYPTO dest, const AES_CRYPTO src)
 {
+    if(not dest or not src)
+    {
+        return -1;
+    }
+
+    dest->decr = src->decr;
+    dest->encr = src->encr;
+
+    dest->decrinit = src->decrinit;
+    dest->encrinit = src->encrinit;
+
+    return 0;
+}
+
+int CRYPTO::AES_encrypt(AES_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
+{
+    if (not ctx)
+    {
+        return -1;
+    }
+
     /* max ciphertext len for a n bytes of plaintext is n + AES_BLOCK_SIZE -1 bytes */
     int c_len = AES_get_encrypted_size(inlen);
     int f_len = 0;
@@ -208,7 +204,15 @@ int AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
     /* update ciphertext, c_len is filled with the length of ciphertext generated,
     *len is the size of plaintext in bytes */
     *out or (*out = new BYTE[c_len + 1]);
-    if (not *out or EVP_EncryptUpdate(ctx->encr, *out, &c_len, in, inlen) <= 0)
+
+    if (not *out)
+    {
+        return -1;
+    }
+
+    memset(*out, 0, c_len + 1);
+
+    if (EVP_EncryptUpdate(ctx->encr, *out, &c_len, in, inlen) <= 0)
     {
         return -1;
     }
@@ -227,8 +231,13 @@ int AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
     return outlen;
 }
 
-int AES_decrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::AES_decrypt(AES_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
 {
+    if (not ctx)
+    {
+        return -1;
+    }
+
     int delta = inlen % AES_BLOCK_SIZE;
     (delta < 8 and (inlen -= delta)) or (inlen += AES_BLOCK_SIZE - delta);
 
@@ -241,6 +250,14 @@ int AES_decrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
     }
 
     *out or (*out = new BYTE[p_len + 1]);
+
+    if (not *out)
+    {
+        return -1;
+    }
+
+    memset(*out, 0, p_len + 1);
+
     if (not *out or EVP_DecryptUpdate(ctx->decr, *out, &p_len, in, inlen) <= 0)
     {
         return -1;
@@ -257,4 +274,25 @@ int AES_decrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
     (*out)[outlen] = 0;
 
     return outlen;
+}
+
+void CRYPTO::AES_CRYPTO_free(AES_CRYPTO ctx)
+{
+    if (not ctx)
+    {
+        return;
+    }
+
+    delete ctx->key;
+    delete ctx->iv;
+
+    if (ctx->encr)
+    {
+        EVP_CIPHER_CTX_free(ctx->encr);
+    }
+
+    if (ctx->decr)
+    {
+        EVP_CIPHER_CTX_free(ctx->decr);
+    }
 }

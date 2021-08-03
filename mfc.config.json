@@ -1,5 +1,5 @@
 {
-  "TARGET": "libcryptography.so.5.0.2",
+  "TARGET": "libcryptography.so.6.0.0",
   "CC": "g++",
   "LD": "ld",
   "C_FLAGS": [
@@ -11,7 +11,7 @@
   ],
   "LD_FLAGS": [
     "-shared",
-    "-soname libcryptography.so.5"
+    "-soname libcryptography.so.6"
   ],
   "LIBS": [
     "crypto"
@@ -28,7 +28,7 @@
     "tests"
   ],
   "CUSTOM_TARGETS": {
-    "static": "ar -rvs libcryptography.a $(OBJECTS)"
+    "static": "ar -rvs libcryptography.a ./src/*.o"
   },
   "VERBOSE": false,
   "RM": "rm -v",

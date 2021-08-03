@@ -1,7 +1,7 @@
 CC :=g++
 LD :=ld
-TARGET :=libcryptography.so.5.0.2
-OUT :=./libcryptography.so.5.0.2
+TARGET :=libcryptography.so.6.0.0
+OUT :=./libcryptography.so.6.0.0
 LIBS :=-lcrypto
 CC_DEPS :=
 OBJECTS :=
@@ -15,13 +15,13 @@ all: $(OUT)
 $(OUT): $(OBJECTS)
 	@echo Building target: "$@".
 	@echo Invoking $(LD) Linker ...
-	$(LD) $(OBJECTS) $(LIBS) -shared -soname libcryptography.so.5 -o $(OUT)
+	$(LD) $(OBJECTS) $(LIBS) -shared -soname libcryptography.so.6 -o $(OUT)
 	@echo Target $(TARGET) build successfully.
 	@echo Done.
 
 clean:
-	$(RM) $(OBJECTS) ./libcryptography.so.5.0.2
+	$(RM) $(OBJECTS) ./libcryptography.so.6.0.0
 
 static:
-	ar -rvs libcryptography.a $(OBJECTS)
+	ar -rvs libcryptography.a ./src/*.o
 

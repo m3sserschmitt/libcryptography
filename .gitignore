@@ -4,3 +4,4 @@
 *.a
 deb
 prepare-deb.sh
+cryptutil

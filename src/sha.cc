@@ -8,17 +8,17 @@
 
 using namespace std;
 
-int digest(BYTES in, SIZE inlen, const CHAR *digest_name, BYTES *out)
+int CRYPTO::digest(const BYTES in, SIZE inlen, const CHAR *digest_name, BYTES *out)
 {
     const EVP_MD *md = EVP_get_digestbyname(digest_name);
-
+    
     if (not md)
     {
         return -1;
     }
 
     EVP_MD_CTX *ctx = EVP_MD_CTX_new();
-    
+
     if (not ctx)
     {
         EVP_MD_CTX_free(ctx);
@@ -55,14 +55,37 @@ int digest(BYTES in, SIZE inlen, const CHAR *digest_name, BYTES *out)
     return outlen;
 }
 
-int sha256(BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::sha256(const BYTES in, SIZE inlen, BYTES *out)
 {
     return digest(in, inlen, "sha256", out);
 }
 
-int sha256(BYTES in, SIZE inlen, PLAINTEXT *out)
+int CRYPTO::hex(const BYTES in, SIZE inlen, PLAINTEXT *out)
 {
-    SIZE outlen = 2 * SHA256_DIGEST_LENGTH;
+    stringstream ss;
+    SIZE i = 0;
+
+    for (; i < inlen; i++)
+    {
+        ss << std::hex << setw(2) << setfill('0') << (int)in[i];
+    }
+
+    i *= 2;
+
+    *out or (*out = new CHAR[i + 1]);
+
+    if(not *out)
+    {
+        return -1;
+    }
+
+    strcpy(*out, ss.str().c_str());
+
+    return i;
+}
+
+int CRYPTO::sha256(const BYTES in, SIZE inlen, PLAINTEXT *out)
+{
     BYTES hash = 0;
 
     if (sha256(in, inlen, &hash) < 0)
@@ -70,16 +93,9 @@ int sha256(BYTES in, SIZE inlen, PLAINTEXT *out)
         return -1;
     }
 
-    stringstream ss;
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-    {
-        ss << hex << setw(2) << setfill('0') << (int)hash[i];
-    }
+    int result = hex(hash, SHA256_DIGEST_LENGTH, out);
 
     delete hash;
 
-    *out or (*out = new CHAR[outlen + 1]);
-    strcpy(*out, ss.str().data());
-
-    return outlen;
+    return result;
 }

@@ -3,8 +3,11 @@
 
 #include "types.hh"
 
-int rand_seed(SIZE len);
+namespace CRYPTO
+{
+    int rand_seed(SIZE len);
 
-int rand_bytes(BYTES randbytes, SIZE len);
+    int rand_bytes(SIZE len, BYTES *out);
+}
 
 #endif
