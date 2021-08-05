@@ -21,6 +21,12 @@ struct _RSA_CRYPTO
 	EVP_MD_CTX *verif;
 	EVP_PKEY_CTX *encr;
 	EVP_PKEY_CTX *decr;
+	bool pubkeyinit;
+	bool privkeyinit;
+	bool signinit;
+	bool verifinit;
+	bool encrinit;
+	bool decrinit;
 };
 
 static size_t get_rsa_size(size_t inlen)
@@ -55,6 +61,12 @@ RSA_CRYPTO CRYPTO::RSA_CRYPTO_new()
 	ctx->verif = 0;
 	ctx->encr = 0;
 	ctx->decr = 0;
+	ctx->pubkeyinit = 0;
+	ctx->privkeyinit = 0;
+	ctx->signinit = 0;
+	ctx->verifinit = 0;
+	ctx->encrinit = 0;
+	ctx->decrinit = 0;
 
 	return ctx;
 }
@@ -123,6 +135,11 @@ int CRYPTO::RSA_init_key(const string &PEM, password_cb *cb, BYTES passphrase, K
 		return -1;
 	}
 
+	if ((ktype == PUBLIC_KEY and ctx->pubkeyinit) or (ktype == PRIVATE_KEY and ctx->privkeyinit))
+	{
+		return 0;
+	}
+
 	BIO *keybio = 0;
 
 	if (not(keybio = BIO_new_mem_buf((void *)PEM.c_str(), -1)))
@@ -147,8 +164,18 @@ int CRYPTO::RSA_init_key(const string &PEM, password_cb *cb, BYTES passphrase, K
 		return -1;
 	}
 
-	*key = EVP_PKEY_new();
-	EVP_PKEY_assign_RSA(*key, rsa);
+	if (not(*key = EVP_PKEY_new()))
+	{
+		return -1;
+	}
+
+	if (not EVP_PKEY_assign_RSA(*key, rsa))
+	{
+		return -1;
+	}
+
+	ktype == PUBLIC_KEY and (ctx->pubkeyinit = 1);
+	ktype == PRIVATE_KEY and (ctx->privkeyinit = 1);
 
 	BIO_free(keybio);
 
@@ -157,6 +184,16 @@ int CRYPTO::RSA_init_key(const string &PEM, password_cb *cb, BYTES passphrase, K
 
 int CRYPTO::RSA_init_key_file(const std::string &filename, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx)
 {
+	if (not ctx)
+	{
+		return -1;
+	}
+
+	if ((ktype == PUBLIC_KEY and ctx->pubkeyinit) or (ktype == PRIVATE_KEY and ctx->privkeyinit))
+	{
+		return 0;
+	}
+
 	FILE *file = fopen(filename.c_str(), "rb");
 
 	if (not file)
@@ -173,8 +210,17 @@ int CRYPTO::RSA_init_key_file(const std::string &filename, password_cb *cb, BYTE
 			return -1;
 		}
 
-		ctx->privkey = EVP_PKEY_new();
-		EVP_PKEY_assign_RSA(ctx->privkey, rsa);
+		if (not(ctx->privkey = EVP_PKEY_new()))
+		{
+			return -1;
+		}
+
+		if (not EVP_PKEY_assign_RSA(ctx->privkey, rsa))
+		{
+			return -1;
+		}
+
+		ctx->privkeyinit = 1;
 	}
 	else if (ktype == PUBLIC_KEY)
 	{
@@ -183,13 +229,32 @@ int CRYPTO::RSA_init_key_file(const std::string &filename, password_cb *cb, BYTE
 			return -1;
 		}
 
-		ctx->pubkey = EVP_PKEY_new();
-		EVP_PKEY_assign_RSA(ctx->pubkey, rsa);
+		if (not(ctx->pubkey = EVP_PKEY_new()))
+		{
+			return -1;
+		}
+
+		if (not EVP_PKEY_assign_RSA(ctx->pubkey, rsa))
+		{
+			return -1;
+		}
+
+		ctx->pubkeyinit = 1;
 	}
 
 	fclose(file);
 
 	return 0;
+}
+
+int CRYPTO::RSA_pubkey_ready(RSA_CRYPTO ctx)
+{
+	return ctx->pubkeyinit;
+}
+
+int CRYPTO::RSA_privkey_ready(RSA_CRYPTO ctx)
+{
+	return ctx->privkeyinit;
 }
 
 int CRYPTO::PEM_key_to_DER(RSA_CRYPTO ctx, BYTES *der)
@@ -209,7 +274,7 @@ int CRYPTO::RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 		return -1;
 	}
 
-	if (op == SIGN or op == VERIFY)
+	if ((op == SIGN and not ctx->signinit) or (op == VERIFY and not ctx->verifinit))
 	{
 		EVP_MD_CTX **op_ctx = 0;
 
@@ -220,8 +285,11 @@ int CRYPTO::RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 		{
 			return -1;
 		}
+
+		op == SIGN and (ctx->signinit = 1);
+		op == VERIFY and (ctx->verifinit = 1);
 	}
-	else
+	else if((op == ENCRYPT and not ctx->encrinit) or (op == DECRYPT and not ctx->decrinit))
 	{
 		typedef int (*Crypto_init)(EVP_PKEY_CTX *);
 
@@ -250,14 +318,42 @@ int CRYPTO::RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 		{
 			return -1;
 		}
+
+		op == ENCRYPT and (ctx->encrinit = 1);
+		op == DECRYPT and (ctx->decrinit = 1);
 	}
 
 	return 0;
 }
 
-int CRYPTO::RSA_sign(RSA_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *sign)
+int CRYPTO::RSA_encrypt_ready(RSA_CRYPTO ctx)
+{
+	return ctx->encrinit;
+}
+
+int CRYPTO::RSA_decrypt_ready(RSA_CRYPTO ctx)
+{
+	return ctx->decrinit;
+}
+
+int CRYPTO::RSA_sign_ready(RSA_CRYPTO ctx)
+{
+	return ctx->signinit;
+}
+
+int CRYPTO::RSA_verify_ready(RSA_CRYPTO ctx)
+{
+	return ctx->verifinit;
+}
+
+int CRYPTO::RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)
 {
 	if (not ctx)
+	{
+		return -1;
+	}
+
+	if(not ctx->signinit)
 	{
 		return -1;
 	}
@@ -298,9 +394,14 @@ int CRYPTO::RSA_sign(RSA_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *sign)
 	return signlen;
 }
 
-int CRYPTO::RSA_verify(RSA_CRYPTO ctx, const BYTES sign, SIZE signlen, const BYTES &data, SIZE datalen, bool &auth)
+int CRYPTO::RSA_verify(RSA_CRYPTO ctx, BYTES sign, SIZE signlen, BYTES data, SIZE datalen, bool &auth)
 {
 	if (not ctx)
+	{
+		return -1;
+	}
+
+	if(not ctx->verifinit)
 	{
 		return -1;
 	}
@@ -339,9 +440,14 @@ int CRYPTO::RSA_verify(RSA_CRYPTO ctx, const BYTES sign, SIZE signlen, const BYT
 	}
 }
 
-int CRYPTO::RSA_encrypt(RSA_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::RSA_encrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 {
 	if (not ctx)
+	{
+		return -1;
+	}
+
+	if(not ctx->encrinit)
 	{
 		return -1;
 	}
@@ -370,9 +476,14 @@ int CRYPTO::RSA_encrypt(RSA_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
 	return outlen;
 }
 
-int CRYPTO::RSA_decrypt(RSA_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::RSA_decrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 {
 	if (not ctx)
+	{
+		return -1;
+	}
+
+	if(not ctx->decrinit)
 	{
 		return -1;
 	}

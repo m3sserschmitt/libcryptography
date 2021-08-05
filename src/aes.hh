@@ -30,7 +30,7 @@ namespace CRYPTO
  * @param ctx AES context to setup encryption key.
  * @return int 0 if success, -1 if failure.
  */
-    int AES_setup_key(const BYTES key, SIZE keylen, AES_CRYPTO ctx);
+    int AES_setup_key(BYTES key, SIZE keylen, AES_CRYPTO ctx);
 
     /**
  * @brief Setup initialization vector to be used for encryption / decryption.
@@ -39,7 +39,7 @@ namespace CRYPTO
  * @param ctx AES context to setup iv vector.
  * @return int 0 if success, -1 if failure.
  */
-    int AES_setup_iv(const BYTES iv, SIZE ivlen, AES_CRYPTO ctx);
+    int AES_setup_iv(BYTES iv, SIZE ivlen, AES_CRYPTO ctx);
 
     /**
  * @brief Return current encryption key from AES context.
@@ -47,7 +47,7 @@ namespace CRYPTO
  * @param ctx Context to retrieve key from.
  * @return SIZE return length of key in bytes.
  */
-    int AES_read_key(const AES_CRYPTO ctx, SIZE keylen, BYTES *key);
+    int AES_read_key(AES_CRYPTO ctx, SIZE keylen, BYTES *key);
 
     /**
  * @brief Get initialization vector from AES context.
@@ -55,7 +55,7 @@ namespace CRYPTO
  * @param ctx Context to retrieve iv from.
  * @return SIZE Size of iv in bytes or -1 if no iv is used within this context.
  */
-    int AES_read_iv(const AES_CRYPTO ctx, SIZE ivlen, BYTES *iv);
+    int AES_read_iv(AES_CRYPTO ctx, SIZE ivlen, BYTES *iv);
 
     /**
  * @brief Initialize AES contex for specified operation.
@@ -68,7 +68,7 @@ namespace CRYPTO
  * @param ctx AES context to be initialized.
  * @return int 0 for success, -1 for failure.
  */
-    int AES_init(const BYTES passphrase, SIZE passlen, const BYTES salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx);
+    int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx);
 
     /**
  * @brief Initialize AES context for both encryption and decryption.
@@ -81,7 +81,10 @@ namespace CRYPTO
  * @param ctx AES context to be initialized.
  * @return int 0 for success, -1 for failure.
  */
-    int AES_init(const BYTES passphrase, SIZE passlen, const BYTES salt, int rounds, AES_CRYPTO ctx);
+    int AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, AES_CRYPTO ctx);
+
+   int AES_encrypt_ready(AES_CRYPTO ctx);
+   int AES_decrypt_ready(AES_CRYPTO ctx);
 
     /**
  * @brief Duplicates AES context. Destination context will use the same resources as source context.
@@ -93,7 +96,7 @@ namespace CRYPTO
  * @param src Source AES context.
  * @return int 0 if success, -1 if failure.
  */
-    int AES_ctx_dup(AES_CRYPTO dest, const AES_CRYPTO src);
+    int AES_ctx_dup(AES_CRYPTO dest, AES_CRYPTO src);
 
     /**
  * @brief Perform AES encryption.
@@ -104,7 +107,7 @@ namespace CRYPTO
  * @param out Encrypted data (if null, then it is dynamically allocated).
  * @return int Size of encrypted data if success, -1 if failure.
  */
-    int AES_encrypt(AES_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out);
+    int AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out);
 
     /**
  * @brief Perform AES decryption.
@@ -115,7 +118,7 @@ namespace CRYPTO
  * @param out Decrypted data (if null, then it is dynamically allocated).
  * @return int Size of decrypted data if success, -1 if failure.
  */
-    int AES_decrypt(AES_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out);
+    int AES_decrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out);
 
     /**
  * @brief Frees memory allocated for AES context.

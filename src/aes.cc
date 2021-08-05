@@ -33,7 +33,7 @@ AES_CRYPTO CRYPTO::AES_CRYPTO_new()
     return ctx;
 }
 
-int CRYPTO::AES_setup_key(const BYTES key, SIZE keylen, AES_CRYPTO ctx)
+int CRYPTO::AES_setup_key(BYTES key, SIZE keylen, AES_CRYPTO ctx)
 {
     if (not ctx)
     {
@@ -53,7 +53,7 @@ int CRYPTO::AES_setup_key(const BYTES key, SIZE keylen, AES_CRYPTO ctx)
     return 0;
 }
 
-int CRYPTO::AES_setup_iv(const BYTES iv, SIZE ivlen, AES_CRYPTO ctx)
+int CRYPTO::AES_setup_iv(BYTES iv, SIZE ivlen, AES_CRYPTO ctx)
 {
     if (not ctx)
     {
@@ -73,7 +73,7 @@ int CRYPTO::AES_setup_iv(const BYTES iv, SIZE ivlen, AES_CRYPTO ctx)
     return 0;
 }
 
-int CRYPTO::AES_read_key(const AES_CRYPTO ctx, SIZE keylen, BYTES *key)
+int CRYPTO::AES_read_key(AES_CRYPTO ctx, SIZE keylen, BYTES *key)
 {
     if (not ctx or not ctx->key)
     {
@@ -93,7 +93,7 @@ int CRYPTO::AES_read_key(const AES_CRYPTO ctx, SIZE keylen, BYTES *key)
     return 0;
 }
 
-int CRYPTO::AES_read_iv(const AES_CRYPTO ctx, SIZE ivlen, BYTES *iv)
+int CRYPTO::AES_read_iv(AES_CRYPTO ctx, SIZE ivlen, BYTES *iv)
 {
     if (not ctx or not ctx->iv)
     {
@@ -113,13 +113,14 @@ int CRYPTO::AES_read_iv(const AES_CRYPTO ctx, SIZE ivlen, BYTES *iv)
     return 0;
 }
 
-int CRYPTO::AES_init(const BYTES passphrase, SIZE passlen, const BYTES salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx)
+int CRYPTO::AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx)
 {
     if (not ctx)
     {
         return -1;
     }
 
+    // derive key and iv from passphrase and salt;
     if (passphrase and passlen /*and (not ctx->key or not ctx->key)*/)
     {
         ctx->key or (ctx->key = new BYTE[32 + 1]);
@@ -139,25 +140,27 @@ int CRYPTO::AES_init(const BYTES passphrase, SIZE passlen, const BYTES salt, int
         }
     }
 
-    EVP_CIPHER_CTX **aes = 0;
-
-    op == ENCRYPT and (aes = &ctx->encr);
-    op == DECRYPT and (aes = &ctx->decr);
-
-    if (not(*aes or (*aes = EVP_CIPHER_CTX_new())))
+    // if context has not been initialized for requested operation
+    if ((op == ENCRYPT and not ctx->encrinit) or
+        (op == DECRYPT and not ctx->decrinit))
     {
-        return -1;
-    }
+        EVP_CIPHER_CTX **aes = 0;
 
-    if ((op == ENCRYPT and not ctx->encrinit) or (op == DECRYPT and not ctx->decrinit))
-    {
+        op == ENCRYPT and (aes = &ctx->encr);
+        op == DECRYPT and (aes = &ctx->decr);
+
+        if (not(*aes or (*aes = EVP_CIPHER_CTX_new())))
+        {
+            return -1;
+        }
+
         if (EVP_CIPHER_CTX_init(*aes) <= 0)
         {
             return -1;
         }
 
-        op == ENCRYPT and (ctx->encrinit = 1) and ctx->key and ctx->iv and EVP_EncryptInit_ex(ctx->encr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv);
-        op == DECRYPT and (ctx->decrinit = 1) and ctx->key and ctx->iv and EVP_DecryptInit_ex(ctx->decr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv);
+        op == ENCRYPT and (ctx->encrinit = 1) /*and ctx->key and ctx->iv and EVP_EncryptInit_ex(ctx->encr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv)*/;
+        op == DECRYPT and (ctx->decrinit = 1) /*and ctx->key and ctx->iv and EVP_DecryptInit_ex(ctx->decr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv)*/;
     }
 
     return 0;
@@ -168,9 +171,19 @@ int CRYPTO::AES_init(BYTES passphrase, SIZE passlen, BYTES salt, int rounds, AES
     return AES_init(passphrase, passlen, salt, rounds, ENCRYPT, ctx) == 0 and AES_init(0, 0, 0, 0, DECRYPT, ctx) == 0 ? 0 : -1;
 }
 
-int CRYPTO::AES_ctx_dup(AES_CRYPTO dest, const AES_CRYPTO src)
+int CRYPTO::AES_encrypt_ready(AES_CRYPTO ctx)
 {
-    if(not dest or not src)
+    return ctx->encrinit;
+}
+
+int CRYPTO::AES_decrypt_ready(AES_CRYPTO ctx)
+{
+    return ctx->decrinit;
+}
+
+int CRYPTO::AES_ctx_dup(AES_CRYPTO dest, AES_CRYPTO src)
+{
+    if (not dest or not src)
     {
         return -1;
     }
@@ -184,9 +197,14 @@ int CRYPTO::AES_ctx_dup(AES_CRYPTO dest, const AES_CRYPTO src)
     return 0;
 }
 
-int CRYPTO::AES_encrypt(AES_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::AES_encrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 {
     if (not ctx)
+    {
+        return -1;
+    }
+
+    if (not ctx->encrinit)
     {
         return -1;
     }
@@ -231,9 +249,14 @@ int CRYPTO::AES_encrypt(AES_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
     return outlen;
 }
 
-int CRYPTO::AES_decrypt(AES_CRYPTO ctx, const BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::AES_decrypt(AES_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 {
     if (not ctx)
+    {
+        return -1;
+    }
+
+    if (not ctx->decrinit)
     {
         return -1;
     }

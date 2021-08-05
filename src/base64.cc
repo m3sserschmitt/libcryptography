@@ -3,7 +3,7 @@
 #include <openssl/evp.h>
 #include <string.h>
 
-int CRYPTO::base64_encode(const BYTES in, SIZE inlen, BASE64 *out)
+int CRYPTO::base64_encode(BYTES in, SIZE inlen, BASE64 *out)
 {
   SIZE outlen = 4 * ((inlen + 2) / 3);
   *out or (*out = new CHAR[outlen + 1]);
@@ -11,7 +11,7 @@ int CRYPTO::base64_encode(const BYTES in, SIZE inlen, BASE64 *out)
   return *out ? EVP_EncodeBlock((BYTES)(*out), in, inlen) : -1;
 }
 
-int CRYPTO::base64_decode(const BASE64 in, BYTES *out)
+int CRYPTO::base64_decode(BASE64 in, BYTES *out)
 {
   SIZE inlen = strlen(in);
 

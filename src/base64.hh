@@ -24,7 +24,7 @@ namespace CRYPTO
  * @param out Encoded data (if null, then it is dynamically allocated).
  * @return int Size of encoded data.
  */
-    int base64_encode(const BYTES in, SIZE inlen, BASE64 *out);
+    int base64_encode(BYTES in, SIZE inlen, BASE64 *out);
 
     /**
  * @brief Perform base64 decoding.
@@ -33,7 +33,7 @@ namespace CRYPTO
  * @param out Decoded data (if null, then it is dynamically allocated).
  * @return int Size of decoded data.
  */
-    int base64_decode(const BASE64 in, BYTES *out);
+    int base64_decode(BASE64 in, BYTES *out);
 }
 
 #endif

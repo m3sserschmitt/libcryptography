@@ -25,7 +25,7 @@ namespace CRYPTO
  * @param out Hashed data
  * @return int Size of hashed data if success, -1 if failure.
  */
-    int digest(const BYTES in, SIZE inlen, const CHAR *digest_name, BYTES *out);
+    int digest(BYTES in, SIZE inlen, const char *digest_name, BYTES *out);
 
 /**
  * @brief Convert hashed data into hexadecimal notation.
@@ -36,7 +36,7 @@ namespace CRYPTO
  * @return int Size of output string, or -1 if failure.
  */
 
-    int hex(const BYTES in, SIZE inlen, PLAINTEXT *out);
+    int hex(BYTES in, SIZE inlen, PLAINTEXT *out);
 
     /**
  * @brief Perform SHA256 hashing.
@@ -46,7 +46,7 @@ namespace CRYPTO
  * @param out Hashed data (if null, then it is dynamically allocated).
  * @return int Size of hash if success, otherwise -1.
  */
-    int sha256(const BYTES in, SIZE inlen, BYTES *out);
+    int sha256(BYTES in, SIZE inlen, BYTES *out);
 
     /**
  * @brief Perform SHA256 hashing.
@@ -56,7 +56,7 @@ namespace CRYPTO
  * @param out Hashed data in hex format (if null, then it is dynamically allocated).
  * @return int Size of hash if success, otherwise -1.
  */
-    int sha256(const BYTES in, SIZE inlen, PLAINTEXT *out);
+    int sha256(BYTES in, SIZE inlen, PLAINTEXT *out);
 }
 
 #endif
