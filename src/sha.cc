@@ -8,7 +8,7 @@
 
 using namespace std;
 
-int CRYPTO::digest(BYTES in, SIZE inlen, const char *digest_name, BYTES *out)
+int CRYPTO::digest(const BYTE *in, SIZE inlen, const CHAR *digest_name, BYTES *out)
 {
     const EVP_MD *md = EVP_get_digestbyname(digest_name);
     
@@ -55,12 +55,12 @@ int CRYPTO::digest(BYTES in, SIZE inlen, const char *digest_name, BYTES *out)
     return outlen;
 }
 
-int CRYPTO::sha256(BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::sha256(const BYTE *in, SIZE inlen, BYTES *out)
 {
     return digest(in, inlen, "sha256", out);
 }
 
-int CRYPTO::hex(BYTES in, SIZE inlen, PLAINTEXT *out)
+int CRYPTO::hex(const BYTE *in, SIZE inlen, PLAINTEXT *out)
 {
     stringstream ss;
     SIZE i = 0;
@@ -84,7 +84,7 @@ int CRYPTO::hex(BYTES in, SIZE inlen, PLAINTEXT *out)
     return i;
 }
 
-int CRYPTO::sha256(BYTES in, SIZE inlen, PLAINTEXT *out)
+int CRYPTO::sha256(const BYTE *in, SIZE inlen, PLAINTEXT *out)
 {
     BYTES hash = 0;
 

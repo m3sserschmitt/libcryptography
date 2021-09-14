@@ -1,1 +1,1 @@
-./main.o: ./main.cc
+./cryptography/tests/main.o: ./cryptography/tests/main.cc

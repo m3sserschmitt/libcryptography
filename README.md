@@ -29,17 +29,17 @@ Change the directory to newly downloaded source code:
 
 `cd /path/to/local/repository`
 
-Change directory to build.
+Run cmake to create Makefiles:
 
-`cd build`.
+`cmake -B./build`.
+
+`cd build`
 
 Now library can be compiled using `make`:
 
-`make`
+`make all`
 
-and if you want to build the static version of library too:
-
-`make static`
+Last command will compile both static and shared library.
 
 Also you can checkout `./tests/main.cc` file for some examples on basic encryption & decryption with AES or RSA, RSA signing & verification and base64 encoding & decoding. You need to install the library on you system in order to compile this.
 

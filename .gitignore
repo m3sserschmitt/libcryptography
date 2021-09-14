@@ -5,3 +5,4 @@
 deb
 prepare-deb.sh
 cryptutil
+build

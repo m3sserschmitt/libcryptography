@@ -71,7 +71,7 @@ RSA_CRYPTO CRYPTO::RSA_CRYPTO_new()
 	return ctx;
 }
 
-int CRYPTO::RSA_generate_keys(const string &public_key, const string &private_key, SIZE bits, bool encrypt_key, BYTES passphrase, SIZE passlen, password_cb *cb)
+int CRYPTO::RSA_generate_keys(const string &public_key, const string &private_key, SIZE bits, bool encrypt_key, BYTE *passphrase, SIZE passlen, password_cb *cb)
 {
 	unsigned long e = RSA_F4;
 	BIGNUM *bignum = BN_new();
@@ -128,7 +128,7 @@ int CRYPTO::RSA_generate_keys(const string &public_key, const string &private_ke
 	return 0;
 }
 
-int CRYPTO::RSA_init_key(const string &PEM, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx)
+int CRYPTO::RSA_init_key(const string &PEM, password_cb *cb, BYTE *passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx)
 {
 	if (not ctx)
 	{
@@ -182,7 +182,7 @@ int CRYPTO::RSA_init_key(const string &PEM, password_cb *cb, BYTES passphrase, K
 	return 0;
 }
 
-int CRYPTO::RSA_init_key_file(const std::string &filename, password_cb *cb, BYTES passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx)
+int CRYPTO::RSA_init_key_file(const std::string &filename, password_cb *cb, BYTE *passphrase, KEY_TYPE ktype, RSA_CRYPTO ctx)
 {
 	if (not ctx)
 	{
@@ -247,25 +247,25 @@ int CRYPTO::RSA_init_key_file(const std::string &filename, password_cb *cb, BYTE
 	return 0;
 }
 
-int CRYPTO::RSA_pubkey_ready(RSA_CRYPTO ctx)
+int CRYPTO::RSA_pubkey_ready(const _RSA_CRYPTO *ctx)
 {
 	return ctx->pubkeyinit;
 }
 
-int CRYPTO::RSA_privkey_ready(RSA_CRYPTO ctx)
+int CRYPTO::RSA_privkey_ready(const _RSA_CRYPTO *ctx)
 {
 	return ctx->privkeyinit;
 }
 
-int CRYPTO::PEM_key_to_DER(RSA_CRYPTO ctx, BYTES *der)
-{
-	if (not ctx or not ctx->pubkey)
-	{
-		return -1;
-	}
+// int CRYPTO::PEM_key_to_DER(RSA_CRYPTO ctx, BYTES *der)
+// {
+// 	if (not ctx or not ctx->pubkey)
+// 	{
+// 		return -1;
+// 	}
 
-	return i2d_PUBKEY(ctx->pubkey, der);
-}
+// 	return i2d_PUBKEY(ctx->pubkey, der);
+// }
 
 int CRYPTO::RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 {
@@ -326,27 +326,27 @@ int CRYPTO::RSA_init_ctx(RSA_CRYPTO ctx, CRYPTO_OP op)
 	return 0;
 }
 
-int CRYPTO::RSA_encrypt_ready(RSA_CRYPTO ctx)
+int CRYPTO::RSA_encrypt_ready(const _RSA_CRYPTO *ctx)
 {
 	return ctx->encrinit;
 }
 
-int CRYPTO::RSA_decrypt_ready(RSA_CRYPTO ctx)
+int CRYPTO::RSA_decrypt_ready(const _RSA_CRYPTO *ctx)
 {
 	return ctx->decrinit;
 }
 
-int CRYPTO::RSA_sign_ready(RSA_CRYPTO ctx)
+int CRYPTO::RSA_sign_ready(const _RSA_CRYPTO *ctx)
 {
 	return ctx->signinit;
 }
 
-int CRYPTO::RSA_verify_ready(RSA_CRYPTO ctx)
+int CRYPTO::RSA_verify_ready(const _RSA_CRYPTO *ctx)
 {
 	return ctx->verifinit;
 }
 
-int CRYPTO::RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)
+int CRYPTO::RSA_sign(RSA_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *sign)
 {
 	if (not ctx)
 	{
@@ -394,7 +394,7 @@ int CRYPTO::RSA_sign(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *sign)
 	return signlen;
 }
 
-int CRYPTO::RSA_verify(RSA_CRYPTO ctx, BYTES sign, SIZE signlen, BYTES data, SIZE datalen, bool &auth)
+int CRYPTO::RSA_verify(RSA_CRYPTO ctx, const BYTE *sign, SIZE signlen, const BYTE *data, SIZE datalen, bool &auth)
 {
 	if (not ctx)
 	{
@@ -440,7 +440,7 @@ int CRYPTO::RSA_verify(RSA_CRYPTO ctx, BYTES sign, SIZE signlen, BYTES data, SIZ
 	}
 }
 
-int CRYPTO::RSA_encrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::RSA_encrypt(RSA_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
 {
 	if (not ctx)
 	{
@@ -476,7 +476,7 @@ int CRYPTO::RSA_encrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
 	return outlen;
 }
 
-int CRYPTO::RSA_decrypt(RSA_CRYPTO ctx, BYTES in, SIZE inlen, BYTES *out)
+int CRYPTO::RSA_decrypt(RSA_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
 {
 	if (not ctx)
 	{

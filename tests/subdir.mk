@@ -1,10 +1,22 @@
-OBJECTS += ./main.o 
+OBJECTS += ./cryptography/tests/main.o 
 
-CC_DEPS += ./deps/main.d 
+CC_DEPS += ./cryptography/tests/deps/main.d 
 
-./%.o: ./%.cc
+./cryptography/tests/%.o: ./cryptography/tests/%.c
 	@echo 'Building file: $<'
-	$(CC) -c -Wall -g -O0 $< -o $@
+	$(CC) -c -Wall $< -o $@
+	@echo 'Build finished: $<'
+	@echo
+
+./cryptography/tests/%.o: ./cryptography/tests/%.cc
+	@echo 'Building file: $<'
+	$(CC) -c -Wall $< -o $@
+	@echo 'Build finished: $<'
+	@echo
+
+./cryptography/tests/%.o: ./cryptography/tests/%.cpp
+	@echo 'Building file: $<'
+	$(CC) -c -Wall $< -o $@
 	@echo 'Build finished: $<'
 	@echo
 
