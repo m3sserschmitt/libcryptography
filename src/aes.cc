@@ -221,16 +221,23 @@ int CRYPTO::AES_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
 
     if (ctx->iv_autoset)
     {
-        delete[] ctx->iv;
+        if(not ctx->iv and not (ctx->iv = new BYTE[16 + 1]))
+        {
+            return -1;
+        }
 
-        ctx->iv = 0;
-        ctx->iv = new BYTE[16 + 1];
-        memset(ctx->iv, 0, 16 + 1);
+        // delete[] ctx->iv;
+
+        // ctx->iv = 0;
+        // ctx->iv = new BYTE[16 + 1];
+        // memset(ctx->iv, 0, 16 + 1);
 
         if (rand_bytes(16, &ctx->iv) < 0)
         {
             return -1;
         }
+
+        ctx->iv[16] = 0;
     }
 
     /* max ciphertext len for a n bytes of plaintext is n + AES_BLOCK_SIZE -1 bytes */
@@ -289,15 +296,20 @@ int CRYPTO::AES_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
 
     if (ctx->iv_append)
     {
-        delete[] ctx->iv;
-        ctx->iv = 0;
-        ctx->iv = new BYTE[16 + 1];
+        if(not ctx->iv and not (ctx->iv = new BYTE[16 + 1]))
+        {
+            return -1;
+        }
+        // delete[] ctx->iv;
+        // ctx->iv = 0;
+        // ctx->iv = new BYTE[16 + 1];
 
-        memset(ctx->iv, 0, 16 + 1);
+        // memset(ctx->iv, 0, 16 + 1);
         memcpy(ctx->iv, ptr, 16);
         
         ptr += 16;
         inlen -= 16;
+        ctx->iv[16] = 0;
     }
 
     if (EVP_DecryptInit_ex(ctx->decr, EVP_aes_256_cbc(), 0, ctx->key, ctx->iv) <= 0)
@@ -332,8 +344,8 @@ void CRYPTO::AES_CRYPTO_free(AES_CRYPTO ctx)
         return;
     }
 
-    delete ctx->key;
-    delete ctx->iv;
+    delete[] ctx->key;
+    delete[] ctx->iv;
 
     if (ctx->encr)
     {
@@ -344,6 +356,20 @@ void CRYPTO::AES_CRYPTO_free(AES_CRYPTO ctx)
     {
         EVP_CIPHER_CTX_free(ctx->decr);
     }
+
+    delete ctx;
+    
+}
+
+void CRYPTO::AES_CRYPTO_free_keys(AES_CRYPTO ctx)
+{
+    if(not ctx)
+    {
+        return;
+    }
+
+    delete[] ctx->iv;
+    delete[] ctx->key;
 
     delete ctx;
 }

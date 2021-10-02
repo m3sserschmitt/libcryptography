@@ -129,6 +129,8 @@ namespace CRYPTO
  * @param ctx Context to be freed.
  */
     void AES_CRYPTO_free(AES_CRYPTO ctx);
+
+    void AES_CRYPTO_free_keys(AES_CRYPTO ctx);
 }
 
 #endif
