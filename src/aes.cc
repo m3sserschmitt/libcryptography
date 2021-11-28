@@ -15,6 +15,8 @@ struct _AES_CRYPTO
     bool decrinit;
     bool iv_autoset;
     bool iv_append;
+
+    _AES_CRYPTO *ref;
 };
 
 static inline SIZE AES_get_encrypted_size(SIZE inlen)
@@ -34,6 +36,8 @@ AES_CRYPTO CRYPTO::AES_CRYPTO_new()
     ctx->decrinit = 0;
     ctx->iv_autoset = 0;
     ctx->iv_append = 0;
+
+    ctx->ref = 0;
 
     return ctx;
 }
@@ -209,6 +213,8 @@ int CRYPTO::AES_ctx_dup(AES_CRYPTO dest, const _AES_CRYPTO *src)
     dest->decrinit = src->decrinit;
     dest->encrinit = src->encrinit;
 
+    dest->ref = const_cast<_AES_CRYPTO *>(src);
+
     return 0;
 }
 
@@ -221,7 +227,7 @@ int CRYPTO::AES_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
 
     if (ctx->iv_autoset)
     {
-        if(not ctx->iv and not (ctx->iv = new BYTE[16 + 1]))
+        if (not ctx->iv and not(ctx->iv = new BYTE[16 + 1]))
         {
             return -1;
         }
@@ -296,7 +302,7 @@ int CRYPTO::AES_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
 
     if (ctx->iv_append)
     {
-        if(not ctx->iv and not (ctx->iv = new BYTE[16 + 1]))
+        if (not ctx->iv and not(ctx->iv = new BYTE[16 + 1]))
         {
             return -1;
         }
@@ -306,7 +312,7 @@ int CRYPTO::AES_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
 
         // memset(ctx->iv, 0, 16 + 1);
         memcpy(ctx->iv, ptr, 16);
-        
+
         ptr += 16;
         inlen -= 16;
         ctx->iv[16] = 0;
@@ -347,23 +353,25 @@ void CRYPTO::AES_CRYPTO_free(AES_CRYPTO ctx)
     delete[] ctx->key;
     delete[] ctx->iv;
 
-    if (ctx->encr)
+    if (not ctx->ref)
     {
-        EVP_CIPHER_CTX_free(ctx->encr);
-    }
+        if (ctx->encr)
+        {
+            EVP_CIPHER_CTX_free(ctx->encr);
+        }
 
-    if (ctx->decr)
-    {
-        EVP_CIPHER_CTX_free(ctx->decr);
+        if (ctx->decr)
+        {
+            EVP_CIPHER_CTX_free(ctx->decr);
+        }
     }
 
     delete ctx;
-    
 }
 
 void CRYPTO::AES_CRYPTO_free_keys(AES_CRYPTO ctx)
 {
-    if(not ctx)
+    if (not ctx)
     {
         return;
     }
