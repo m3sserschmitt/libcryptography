@@ -1,23 +1,10 @@
+#include "aes_types.hh"
 #include "aes.hh"
 #include "random.hh"
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>
 #include <string.h>
-
-struct _AES_CRYPTO
-{
-    BYTES key;
-    BYTES iv;
-    EVP_CIPHER_CTX *encr;
-    EVP_CIPHER_CTX *decr;
-    bool encrinit;
-    bool decrinit;
-    bool iv_autoset;
-    bool iv_append;
-
-    _AES_CRYPTO *ref;
-};
 
 static inline SIZE AES_get_encrypted_size(SIZE inlen)
 {

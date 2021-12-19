@@ -1,8 +1,7 @@
 /**
  * @file base64.hh
- * @author Romulus-Emanuel Ruja
+ * @author Romulus-Emanuel Ruja <romulus-emanuel.ruja@tutanota.com>
  * @brief This file contain functions for base64 encoding & decoding.
- * @version 0.1
  * @date 2021-07-06
  * 
  * @copyright Copyright (c) 2021 MIT License.

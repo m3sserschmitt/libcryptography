@@ -1,8 +1,7 @@
 /**
  * @file types.hh
- * @author Romulus-Emanuel Ruja
+ * @author Romulus-Emanuel Ruja <romulus-emanuel.ruja@tutanota.com>
  * @brief This file contain some type definitions.
- * @version 0.1
  * @date 2021-07-06
  * 
  * @copyright Copyright (c) 2021 MIT License.

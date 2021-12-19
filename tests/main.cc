@@ -6,25 +6,6 @@
 
 using namespace std;
 
-/*
-static BYTES read_file(string filename, const char *open_mode)
-{
-    FILE *file = fopen(filename.c_str(), open_mode);
-
-    fseek(file, 0, SEEK_END);
-    long filesize = ftell(file);    
-    fseek(file, 0, SEEK_SET);
-
-    BYTES data = new BYTE[filesize + 1];
-
-    fread(data, sizeof(BYTE), filesize, file);
-
-    fclose(file);
-
-    return data;
-}
-*/
-
 /**
  * @brief Basic example for base64 encoding / decoding.
  * 
@@ -82,12 +63,12 @@ bool test_AES()
     cout << "aes_decrypt_ready: " << CRYPTO::AES_decrypt_ready(ctx) << "\n";
 
     BYTES encr = 0;
-    int encrlen = CRYPTO::AES_auth_encrypt(ctx, data, datalen, 0, 0, &encr);
+    int encrlen = CRYPTO::AES_auth_encrypt(ctx, data, datalen, &encr);
 
     cout << "aes_auth_encr: " << encrlen << "\n"; 
 
     BYTES decr = 0;
-    int decrlen = CRYPTO::AES_auth_decrypt(ctx, encr, encrlen, 0, 0, &decr);
+    int decrlen = CRYPTO::AES_auth_decrypt(ctx, encr, encrlen, &decr);
 
     cout << "aes_auth_decr: " << decrlen << "\n";
 

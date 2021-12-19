@@ -1,24 +1,11 @@
-#include "../include/aes.hh"
-#include "../include/random.hh"
+#include "aes_types.hh"
+#include "aes.hh"
+#include "random.hh"
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>
 
 #include <string.h>
-
-struct _AES_CRYPTO
-{
-    BYTES key;
-    BYTES iv;
-    EVP_CIPHER_CTX *encr;
-    EVP_CIPHER_CTX *decr;
-    bool encrinit;
-    bool decrinit;
-    bool iv_autoset;
-    bool iv_append;
-
-    _AES_CRYPTO *ref;
-};
 
 int CRYPTO::AES_init_ctx(CRYPTO_OP op, AES_CRYPTO ctx)
 {
@@ -134,6 +121,11 @@ int CRYPTO::AES_auth_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const B
     return f_len + len + AES_GCM_IV_SIZE + AES_GCM_TAG_SIZE;
 }
 
+int CRYPTO::AES_auth_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
+{
+    return AES_auth_encrypt(ctx, in, inlen, 0, 0, out);
+}
+
 int CRYPTO::AES_auth_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const BYTE *aad, SIZE aadlen, BYTES *out)
 {
     if (1 != EVP_DecryptInit_ex(ctx->decr, EVP_aes_256_gcm(), NULL, NULL, NULL))
@@ -202,4 +194,9 @@ int CRYPTO::AES_auth_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const B
     }
 
     return len + f_len;
+}
+
+int CRYPTO::AES_auth_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out)
+{
+    return AES_auth_decrypt(ctx, in, inlen, 0, 0, out);
 }
