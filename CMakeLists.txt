@@ -24,5 +24,7 @@ add_library(cryptography6 STATIC
 ./src/sha.cc
 )
 
+target_link_libraries(cryptography6 crypto)
+
 add_executable(libcryptography_tests ./tests/main.cc)
-target_link_libraries(libcryptography_tests cryptography6 crypto)
+target_link_libraries(libcryptography_tests cryptography6)

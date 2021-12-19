@@ -118,6 +118,8 @@ int CRYPTO::AES_auth_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const B
     delete[] tag;
     tag = 0;
 
+    EVP_CIPHER_CTX_reset(ctx->encr);
+
     return f_len + len + AES_GCM_IV_SIZE + AES_GCM_TAG_SIZE;
 }
 
@@ -192,6 +194,8 @@ int CRYPTO::AES_auth_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const B
     {
         return -1;
     }
+
+    EVP_CIPHER_CTX_reset(ctx->decr);
 
     return len + f_len;
 }
