@@ -119,6 +119,33 @@ int CRYPTO::AES_read_iv(const _AES_CRYPTO *ctx, SIZE ivlen, BYTES *iv)
     return 0;
 }
 
+int CRYPTO::AES_init_ctx(CRYPTO_OP op, AES_CRYPTO ctx)
+{
+    if ((op == ENCRYPT and not ctx->encrinit) or
+        (op == DECRYPT and not ctx->decrinit))
+    {
+        EVP_CIPHER_CTX **aes = 0;
+
+        op == ENCRYPT and (aes = &ctx->encr);
+        op == DECRYPT and (aes = &ctx->decr);
+
+        if (not(*aes or (*aes = EVP_CIPHER_CTX_new())))
+        {
+            return -1;
+        }
+
+        if (EVP_CIPHER_CTX_init(*aes) <= 0)
+        {
+            return -1;
+        }
+
+        op == ENCRYPT and (ctx->encrinit = 1);
+        op == DECRYPT and (ctx->decrinit = 1);
+    }
+
+    return 0;
+}
+
 int CRYPTO::AES_init(const BYTE *passphrase, SIZE passlen, const BYTE *salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx)
 {
     if (not ctx)

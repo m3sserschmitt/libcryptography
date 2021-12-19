@@ -14,6 +14,7 @@
 #include "types.hh"
 #include "aes_const.hh"
 
+
 namespace CRYPTO
 {
   /**
@@ -38,7 +39,7 @@ namespace CRYPTO
  * @param autoset IV autoset flag
  * @param ctx AES to enable IV autoset
  */
-  [[deprecated("This function might be removed in further releases; AES_auth_encrypt will automatically generate a new IV on every encryption cycle.")]] void AES_iv_autoset(bool autoset, AES_CRYPTO ctx);
+  [[deprecated("This function might be removed in further releases;")]] void AES_iv_autoset(bool autoset, AES_CRYPTO ctx);
 
   /**
  * @brief Enable or disable IV append. If IV append enabled, then IV will be put at the beginning of every ciphertext.
@@ -46,7 +47,7 @@ namespace CRYPTO
  * @param append IV append flag
  * @param ctx AES to enable IV append
  */
-  [[deprecated("This function might be removed in further releases; AES_auth_encrypt will automatically append IV to ciphertext")]] void AES_iv_append(bool append, AES_CRYPTO ctx);
+  [[deprecated("This function might be removed in further releases;")]] void AES_iv_append(bool append, AES_CRYPTO ctx);
 
   /**
  * @brief Setup initialization vector to be used for encryption / decryption.
@@ -55,7 +56,7 @@ namespace CRYPTO
  * @param ctx AES context to setup iv vector.
  * @return int 0 if success, -1 if failure.
  */
-  int AES_setup_iv(const BYTE *iv, SIZE ivlen, AES_CRYPTO ctx);
+  [[deprecated("This function might be removed in further releases;")]] int AES_setup_iv(const BYTE *iv, SIZE ivlen, AES_CRYPTO ctx);
 
   /**
  * @brief Return current encryption key from AES context.
@@ -93,7 +94,7 @@ namespace CRYPTO
  * @param ctx AES context to be initialized.
  * @return int 0 for success, -1 for failure.
  */
-  [[deprecated("This function initializes AES context in CBC mode and it might be removed in further releases. Use AES_setup key & AES_init_ctx instead.")]] int AES_init(const BYTE *passphrase, SIZE passlen, const BYTE *salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx);
+  [[deprecated("This function might be removed in further releases. Use AES_init_ctx instead.")]] int AES_init(const BYTE *passphrase, SIZE passlen, const BYTE *salt, int rounds, CRYPTO_OP op, AES_CRYPTO ctx);
 
   /**
  * @brief Initialize AES context for both encryption and decryption.
@@ -106,7 +107,7 @@ namespace CRYPTO
  * @param ctx AES context to be initialized.
  * @return int 0 for success, -1 for failure.
  */
-  [[deprecated("This function initializes AES context in CBC mode and it might be removed in further releases. Use AES_setup key & AES_init_ctx instead.")]] int AES_init(const BYTE *passphrase, SIZE passlen, const BYTE *salt, int rounds, AES_CRYPTO ctx);
+  [[deprecated("This function might be removed in further releases. Use AES_init_ctx instead.")]] int AES_init(const BYTE *passphrase, SIZE passlen, const BYTE *salt, int rounds, AES_CRYPTO ctx);
 
   /**
  * @brief Check if AES context is ready for encryption;
@@ -137,20 +138,7 @@ namespace CRYPTO
   int AES_ctx_dup(AES_CRYPTO dest, const _AES_CRYPTO *src);
 
   /**
- * @brief Perform AES encryption.
- * 
- * @param ctx Initialized AES context.
- * @param in Data to be encrypted.
- * @param inlen Data length in bytes.
- * @param out Encrypted data (if null, then it is dynamically allocated).
- * @param aad Additional Authenticated Data (AAD)
- * @param aadlen Additional authenticated data size in bytes
- * @return int Size of encrypted data if success, -1 if failure.
- */
-  int AES_auth_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const BYTE *aad, SIZE aadlen, BYTES *out);
-
-  /**
- * @brief Perform AES encryption.
+ * @brief Perform AES CBC encryption.
  * 
  * @param ctx Initialized AES context.
  * @param in Data to be encrypted.
@@ -158,34 +146,10 @@ namespace CRYPTO
  * @param out Encrypted data (if null, then it is dynamically allocated).
  * @return int Size of encrypted data if success, -1 if failure.
  */
-  int AES_auth_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out);
+  [[deprecated("This function might be removed in further releases;")]] int AES_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out);
 
   /**
- * @brief Perform AES encryption.
- * 
- * @param ctx Initialized AES context.
- * @param in Data to be encrypted.
- * @param inlen Data length in bytes.
- * @param out Encrypted data (if null, then it is dynamically allocated).
- * @return int Size of encrypted data if success, -1 if failure.
- */
-  [[deprecated("This function uses CBC mode for encryption and might be removed in further releases; Use AES_auth_encrypt instead.")]] int AES_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out);
-
-  /**
- * @brief Perform AES encryption.
- * 
- * @param ctx Initialized AES context.
- * @param in Data to be encrypted.
- * @param inlen Data length in bytes.
- * @param out Encrypted data (if null, then it is dynamically allocated).
- * @param aad Additional Authenticated Data (AAD)
- * @param aadlen Additional authenticated data size in bytes
- * @return int Size of encrypted data if success, -1 if failure.
- */
-  int AES_auth_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const BYTE *aad, SIZE aadlen, BYTES *out);
-
-  /**
- * @brief Perform AES decryption.
+ * @brief Perform AES CBC decryption.
  * 
  * @param ctx Initialized AES context.
  * @param in Data to be decrypted.
@@ -193,18 +157,7 @@ namespace CRYPTO
  * @param out Decrypted data (if null, then it is dynamically allocated).
  * @return int Size of decrypted data if success, -1 if failure.
  */
-  int AES_auth_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out);
-
-  /**
- * @brief Perform AES decryption.
- * 
- * @param ctx Initialized AES context.
- * @param in Data to be decrypted.
- * @param inlen Data length in bytes.
- * @param out Decrypted data (if null, then it is dynamically allocated).
- * @return int Size of decrypted data if success, -1 if failure.
- */
-  [[deprecated("This function uses CBC mode for decryption and might be removed in further releases; Use AES_auth_decrypt instead.")]] int AES_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out);
+  [[deprecated("This function might be removed in further releases;")]] int AES_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *out);
 
   /**
  * @brief Frees memory allocated for AES context.

@@ -11,6 +11,7 @@
 
 #include "aes_const.hh"
 #include "aes.hh"
+#include "aes_auth.hh"
 #include "base64.hh"
 #include "rsa.hh"
 #include "random.hh"
