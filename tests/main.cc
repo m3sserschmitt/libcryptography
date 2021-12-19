@@ -1,8 +1,4 @@
-#include <cryptography/aes.hh>
-#include <cryptography/base64.hh>
-#include <cryptography/rsa.hh>
-#include <cryptography/sha.hh>
-#include <cryptography/random.hh>
+#include "../include/cryptography.hh"
 
 #include <fstream>
 #include <iostream>
@@ -28,7 +24,6 @@ static BYTES read_file(string filename, const char *open_mode)
     return data;
 }
 */
-
 
 /**
  * @brief Basic example for base64 encoding / decoding.
@@ -58,7 +53,6 @@ bool test_base64()
     return result;
 }
 
-
 /**
  * @brief Basic example for AES encryption and decryption
  * 
@@ -76,32 +70,29 @@ bool test_AES()
 
     // encryption passphrase and its size in bytes.
     BYTES key = (BYTES) "this is encryption password";
-    SIZE keylen = strlen((PLAINTEXT)key);
 
-    // init AES context.
-    cout << "AES init: " << CRYPTO::AES_init(key, keylen, 0, 128, ctx) << "\n";
+    cout << "aes_setup_key: " << CRYPTO::AES_setup_key(key, AES_GCM_KEY_SIZE, ctx) << "\n";
 
-    // now data can be encrypted.
-    BYTES encrypted = 0;
-    int enclen = CRYPTO::AES_encrypt(ctx, data, datalen, &encrypted);
+    cout << "aes_ctx_init: " << CRYPTO::AES_init_ctx(ENCRYPT, ctx) << "\n";
 
-    cout << "encrypted size: " << enclen << "\n";
+    cout << "aes_ctx_init: " << CRYPTO::AES_init_ctx(DECRYPT, ctx) << "\n";
 
-    // decrypt data and compare final string with initial string.
-    BYTES decrypted = 0;
-    int decrlen = CRYPTO::AES_decrypt(ctx, encrypted, enclen, &decrypted);
-    cout << "decrypted size: " << decrlen << "\n";
+    cout << "aes_encrypt_ready: " << CRYPTO::AES_encrypt_ready(ctx) << "\n";
 
-    cout << decrypted << "\n";
+    cout << "aes_decrypt_ready: " << CRYPTO::AES_decrypt_ready(ctx) << "\n";
 
-    bool result = (int)datalen == decrlen and not strcmp((PLAINTEXT)data, (PLAINTEXT)decrypted);
+    BYTES encr = 0;
+    int encrlen = CRYPTO::AES_auth_encrypt(ctx, data, datalen, 0, 0, &encr);
 
-    free(encrypted);
-    free(decrypted);
+    cout << "aes_auth_encr: " << encrlen << "\n"; 
 
-    return result;
+    BYTES decr = 0;
+    int decrlen = CRYPTO::AES_auth_decrypt(ctx, encr, encrlen, 0, 0, &decr);
+
+    cout << "aes_auth_decr: " << decrlen << "\n";
+
+    return strlen((const char *)data) == decrlen and not strncmp((const char *)data, (const char *)decr, strlen((const char *)data));
 }
-
 
 /**
  * @brief Basic example for RSA encryption, decryption, signing and verification.
@@ -112,14 +103,14 @@ bool test_AES()
 bool test_RSA()
 {
     // this is how you can generate keys.
-    cout << "generate_key: " << CRYPTO::RSA_generate_keys("public.pem", "private.pem", 4096, 1, (BYTES)"private key encryption passphrase", 33, 0) << "\n";
+    cout << "generate_key: " << CRYPTO::RSA_generate_keys("public.pem", "private.pem", 4096, 1, (BYTES) "private key encryption passphrase", 33, 0) << "\n";
 
     // create new RSA context.
     RSA_CRYPTO ctx = CRYPTO::RSA_CRYPTO_new();
 
     // initialize keys from generated files, then init context for encryption, decryption, signing and verification.
     cout << "pubkey init: " << CRYPTO::RSA_init_key_file("public.pem", 0, 0, PUBLIC_KEY, ctx) << "\n";
-    cout << "privkey init: " << CRYPTO::RSA_init_key_file("private.pem", 0, (BYTES)"private key encryption passphrase", PRIVATE_KEY, ctx) << "\n";
+    cout << "privkey init: " << CRYPTO::RSA_init_key_file("private.pem", 0, (BYTES) "private key encryption passphrase", PRIVATE_KEY, ctx) << "\n";
 
     cout << "sign ctx init: " << CRYPTO::RSA_init_ctx(ctx, SIGN) << "\n";
     cout << "verify init ctx: " << CRYPTO::RSA_init_ctx(ctx, VERIFY) << "\n";
@@ -153,7 +144,7 @@ bool test_RSA()
     // now test RSA encryption.
     BYTES encr = 0;
     int encrlen = CRYPTO::RSA_encrypt(ctx, data, datalen, &encr);
-    
+
     cout << "encrlen: " << encrlen << "\n";
 
     // test decryption.
@@ -163,7 +154,7 @@ bool test_RSA()
     cout << "decrlen: " << decrlen << "\n";
     cout << "decrypted text: " << decr << "\n";
 
-    bool encr_result = encrlen > 0 and decr > 0 and not strcmp((PLAINTEXT)decr, (PLAINTEXT)data);
+    bool encr_result = encrlen > 0 and decr and not strcmp((PLAINTEXT)decr, (PLAINTEXT)data);
 
     return signlen > 0 and auth and not auth2 and encr_result;
 }
