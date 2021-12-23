@@ -9,6 +9,11 @@
 
 int CRYPTO::AES_auth_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const BYTE *aad, SIZE aadlen, BYTES *out)
 {
+    if(not ctx or not ctx->encr or not in)
+    {
+        return -1;
+    }
+    
     BYTES iv = new BYTE[AES_GCM_IV_SIZE + 1];
     BYTES tag = new BYTE[AES_GCM_TAG_SIZE + 1];
 
@@ -113,6 +118,11 @@ int CRYPTO::AES_auth_encrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, BYTES *
 
 int CRYPTO::AES_auth_decrypt(AES_CRYPTO ctx, const BYTE *in, SIZE inlen, const BYTE *aad, SIZE aadlen, BYTES *out)
 {
+    if(not ctx or not ctx->decr or not in)
+    {
+        return -1;
+    }
+
     BYTES iv = new BYTE[AES_GCM_IV_SIZE + 1];
     BYTES tag = new BYTE[AES_GCM_TAG_SIZE + 1];
 

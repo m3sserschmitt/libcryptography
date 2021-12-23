@@ -367,20 +367,26 @@ void CRYPTO::AES_CRYPTO_free(AES_CRYPTO ctx)
     delete[] ctx->key;
     delete[] ctx->iv;
 
+    ctx->key = 0;
+    ctx->iv = 0;
+
     if (not ctx->ref)
     {
         if (ctx->encr)
         {
             EVP_CIPHER_CTX_free(ctx->encr);
+            ctx->encr = 0;
         }
 
         if (ctx->decr)
         {
             EVP_CIPHER_CTX_free(ctx->decr);
+            ctx->decr = 0;
         }
     }
 
     delete ctx;
+    ctx = 0;
 }
 
 void CRYPTO::AES_CRYPTO_free_keys(AES_CRYPTO ctx)
@@ -393,5 +399,9 @@ void CRYPTO::AES_CRYPTO_free_keys(AES_CRYPTO ctx)
     delete[] ctx->iv;
     delete[] ctx->key;
 
+    ctx->iv = 0;
+    ctx->key = 0;
+
     delete ctx;
+    ctx = 0;
 }
