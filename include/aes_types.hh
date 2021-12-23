@@ -16,8 +16,8 @@ struct _AES_CRYPTO
     EVP_CIPHER_CTX *decr;
 
     // track context initialization for encryption & decryption
-    bool encrinit;
-    bool decrinit;
+    [[deprecated("It might be removed in further releases;")]]bool encrinit;
+    [[deprecated("It might be removed in further releases;")]]bool decrinit;
 
     [[deprecated("It might be removed in further releases;")]] bool iv_autoset;
     [[deprecated("It might be removed in further releases;")]] bool iv_append;
