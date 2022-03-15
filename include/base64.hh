@@ -22,15 +22,15 @@ namespace CRYPTO
     * @param inlen Size of data to be encoded
     * @return int Size of base64 encoded data
     */
-   int base64_get_encoded_size(SIZE inlen);
+   SIZE base64_get_encoded_size(SIZE inlen);
 
    /**
     * @brief Get size of base64 decoded data
     * 
-    * @param inlen Size of data to be decoded
+    * @param in Base64 encoded data
     * @return int Size of base64 decoded data
     */
-   int base64_get_decoded_size(SIZE inlen);
+   SIZE base64_get_decoded_size(const CHAR *in);
 
    /**
     * @brief Perform base64 encoding.
