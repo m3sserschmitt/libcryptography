@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(libcryptography VERSION 6.0.1)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 add_library(cryptography SHARED 
 ./src/aes.cc 
 ./src/aes_auth.cc

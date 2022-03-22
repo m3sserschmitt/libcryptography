@@ -1,6 +1,6 @@
-#include "aes_types.hh"
-#include "aes.hh"
-#include "random.hh"
+#include "cryptography/aes_types.hh"
+#include "cryptography/aes.hh"
+#include "cryptography/random.hh"
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>

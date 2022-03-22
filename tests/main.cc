@@ -1,4 +1,4 @@
-#include "../include/cryptography.hh"
+#include <cryptography/cryptography.hh>
 
 #include <fstream>
 #include <iostream>

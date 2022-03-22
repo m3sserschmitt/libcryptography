@@ -1,5 +1,5 @@
-#include "rsa.hh"
-#include "base64.hh"
+#include "cryptography/rsa.hh"
+#include "cryptography/base64.hh"
 
 #include <openssl/evp.h>
 #include <openssl/pem.h>
