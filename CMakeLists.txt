@@ -13,7 +13,6 @@ add_library(cryptography SHARED
 ./src/sha.cc
 )
 
-target_link_libraries(cryptography crypto)
 set_target_properties(cryptography PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 7)
 
 add_library(cryptography7 STATIC 
@@ -24,8 +23,3 @@ add_library(cryptography7 STATIC
 ./src/random.cc 
 ./src/sha.cc
 )
-
-target_link_libraries(cryptography7 crypto)
-
-add_executable(libcryptography_tests ./tests/main.cc)
-target_link_libraries(libcryptography_tests cryptography7)
