@@ -23,3 +23,6 @@ add_library(cryptography7 STATIC
 ./src/random.cc 
 ./src/sha.cc
 )
+
+target_link_libraries(cryptography crypto)
+target_link_libraries(cryptography7 crypto)
