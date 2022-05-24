@@ -18,3 +18,4 @@
 #include "types.hh"
 #include "sha.hh"
 #include "types.hh"
+#include "hex.hh"

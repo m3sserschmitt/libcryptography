@@ -11,6 +11,7 @@ add_library(cryptography SHARED
 ./src/rsa.cc 
 ./src/random.cc 
 ./src/sha.cc
+./src/hex.cc
 )
 
 set_target_properties(cryptography PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 7)
@@ -22,6 +23,7 @@ add_library(cryptography7 STATIC
 ./src/rsa.cc 
 ./src/random.cc 
 ./src/sha.cc
+./src/hex.cc
 )
 
 target_link_libraries(cryptography crypto)

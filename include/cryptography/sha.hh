@@ -26,17 +26,6 @@ namespace CRYPTO
  */
     int digest(const BYTE *in, SIZE inlen, const CHAR *digest_name, BYTES *out);
 
-/**
- * @brief Convert hashed data into hexadecimal notation.
- * 
- * @param in Hashed data to be converted.
- * @param inlen Size of input data in bytes.
- * @param out Hex string.
- * @return int Size of output string, or -1 if failure.
- */
-
-    int hex(const BYTE *in, SIZE inlen, PLAINTEXT *out);
-
     /**
  * @brief Perform SHA256 hashing.
  * 

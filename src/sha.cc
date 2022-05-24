@@ -1,9 +1,8 @@
 #include "cryptography/sha.hh"
+#include "cryptography/hex.hh"
 
 #include <openssl/sha.h>
 #include <openssl/evp.h>
-#include <sstream>
-#include <iomanip>
 #include <string.h>
 
 using namespace std;
@@ -58,30 +57,6 @@ int CRYPTO::digest(const BYTE *in, SIZE inlen, const CHAR *digest_name, BYTES *o
 int CRYPTO::sha256(const BYTE *in, SIZE inlen, BYTES *out)
 {
     return digest(in, inlen, "sha256", out);
-}
-
-int CRYPTO::hex(const BYTE *in, SIZE inlen, PLAINTEXT *out)
-{
-    stringstream ss;
-    SIZE i = 0;
-
-    for (; i < inlen; i++)
-    {
-        ss << std::hex << setw(2) << setfill('0') << (int)in[i];
-    }
-
-    i *= 2;
-
-    *out or (*out = new CHAR[i + 1]);
-
-    if(not *out)
-    {
-        return -1;
-    }
-
-    strcpy(*out, ss.str().c_str());
-
-    return i;
 }
 
 int CRYPTO::sha256(const BYTE *in, SIZE inlen, PLAINTEXT *out)
